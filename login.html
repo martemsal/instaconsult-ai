@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | InstaConsult AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .login-page {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #1b0a33 0%, #0a0514 100%);
+        }
+
+        .login-card {
+            width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body class="login-page">
+    <div class="login-card glass animate-fade">
+        <div class="logo">Insta<span>Consult</span>AI</div>
+        <p style="color: var(--text-dim); margin-bottom: 30px;">Acesse seu painel estratégico</p>
+
+        <form id="login-form">
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label style="display: block; margin-bottom: 8px;">Usuário</label>
+                <input type="text" id="login-user" class="form-input" placeholder="Seu usuário" required>
+            </div>
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label style="display: block; margin-bottom: 8px;">Senha</label>
+                <input type="password" id="login-pass" class="form-input" placeholder="Sua senha" required>
+            </div>
+            <button type="submit" class="btn-growth" style="width: 100%;">Acessar Dashboard</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://aokhxnwaqhdokgncfejn.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+
+            try {
+                const { data, error } = await supabase
+                    .from('companies')
+                    .select('*')
+                    .eq('username', user)
+                    .eq('password', pass)
+                    .single();
+
+                if (error || !data) {
+                    alert('Usuário ou senha incorretos.');
+                    return;
+                }
+
+                localStorage.setItem('current_company', JSON.stringify(data));
+                window.location.href = 'dashboard.html';
+            } catch (e) {
+                alert('Erro ao conectar ao servidor.');
+            }
+        });
+    </script>
+</body>
+
+</html>
