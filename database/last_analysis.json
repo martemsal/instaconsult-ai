@@ -1,0 +1,37 @@
+{
+    "account": "@agenciagreef",
+    "niche": "Marketing Digital & Branding",
+    "score": 3.2,
+    "kpis": {
+        "reach": "10",
+        "eng": "Baixo (<1%)",
+        "followers": "1.099",
+        "readiness": "70%"
+    },
+    "insights": {
+        "strong": "A identidade visual é profissional e coesa, transmitindo autoridade técnica imediata.",
+        "bottleneck": "O alcance orgânico está em estado de 'hibernação' (10 contas/30 dias). O algoritmo parou de distribuir o conteúdo para novos públicos."
+    },
+    "plan": [
+        {
+            "task": "Postar 1 Reel de 'Bastidores de Projeto' com áudio em alta (Foco em Reels para quebrar o gelo do alcance).",
+            "priority": "Crítica"
+        },
+        {
+            "task": "Bio: Adicionar um CTA direto para o WhatsApp ou Portfólio (atualmente está vago).",
+            "priority": "Alta"
+        },
+        {
+            "task": "Interação Ativa: Comentar em 15 perfis de empresas locais por dia para forçar visualizações de perfil.",
+            "priority": "Média"
+        },
+        {
+            "task": "Carrossel: '3 Erros de Branding que afastam clientes' (Conteúdo educacional de compartilhamento).",
+            "priority": "Alta"
+        },
+        {
+            "task": "Legendas: Usar as primeiras 2 linhas para criar curiosidade, não apenas descrever o serviço.",
+            "priority": "Média"
+        }
+    ]
+}

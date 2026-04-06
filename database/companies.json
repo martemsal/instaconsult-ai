@@ -1,0 +1,37 @@
+[
+    {
+        "id": "42192bdb-96df-44b7-a6ac-5851e7a5dc96",
+        "name": "Teste Imobiliaria",
+        "niche": "Imobiliário",
+        "plan": "Pro",
+        "status": "Active"
+    },
+    {
+        "id": "daa4fcb2-c125-4284-ba1c-506b8e229ad5",
+        "name": "Empresa Teste 2026",
+        "niche": "Moda",
+        "plan": "Premium",
+        "status": "Active",
+        "analysis_pending": false
+    },
+    {
+        "id": "c04a6fd5-f4ac-4d23-8355-be4df177375a",
+        "name": "TEST_INTEGRATION",
+        "niche": "Auto",
+        "plan": "Free",
+        "status": "Active",
+        "analysis_pending": true
+    },
+    {
+        "id": "5WZZ3Y",
+        "name": "Marcelo Saldanha",
+        "niche": "Consultoria & IA para Negócios",
+        "plan": "Pro",
+        "username": "saldanha",
+        "password": "123",
+        "insta_handle": "@marcelosaldanhasc",
+        "status": "Active",
+        "analysis_pending": false,
+        "history": []
+    }
+]
