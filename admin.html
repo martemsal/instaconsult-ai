@@ -77,60 +77,63 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = "https://aokhxnwaqhdokgncfejn.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
+    const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
+    
+    // Nome amigável para evitar erro de 'already declared'
+    const db = window.supabase.createClient(SURL, SKEY);
 
-        const rows = document.getElementById('company-rows');
-        const modal = document.getElementById('modal');
-        const count = document.getElementById('total-count');
+    const rows = document.getElementById('company-rows');
+    const modal = document.getElementById('modal');
+    const count = document.getElementById('total-count');
 
-        async function loadCompanies() {
-            const { data, error } = await supabase.from('companies').select('*').order('created_at', { ascending: false });
-            if (data) {
-                rows.innerHTML = data.map(c => `
-                    <tr>
-                        <td>${c.name}</td>
-                        <td>@${c.insta_handle}</td>
-                        <td>${c.niche || 'N/A'}</td>
-                        <td><strong>${c.username}</strong></td>
-                        <td>${c.password}</td>
-                        <td><button onclick="del('${c.id}')" style="color:#ff4444; background:none; border:none; cursor:pointer;">Remover</button></td>
-                    </tr>
-                `).join('');
-                count.textContent = data.length;
-            }
+    async function loadCompanies() {
+        const { data, error } = await db.from('companies').select('*').order('created_at', { ascending: false });
+        if (data) {
+            rows.innerHTML = data.map(c => `
+                <tr>
+                    <td>${c.name}</td>
+                    <td>@${c.insta_handle}</td>
+                    <td>${c.niche || 'N/A'}</td>
+                    <td><strong>${c.username}</strong></td>
+                    <td>${c.password}</td>
+                    <td><button onclick="del('${c.id}')" style="color:#ff4444; background:none; border:none; cursor:pointer;">Remover</button></td>
+                </tr>
+            `).join('');
+            count.textContent = data.length;
         }
+    }
 
-        window.del = async (id) => {
-            if (!confirm("Remover esta conta?")) return;
-            await supabase.from('companies').delete().eq('id', id);
-            loadCompanies();
-        };
-
-        document.getElementById('new-access').onclick = () => modal.style.display = 'flex';
-        document.getElementById('cancel').onclick = () => modal.style.display = 'none';
-
-        document.getElementById('save').onclick = async () => {
-            const name = document.getElementById('n-name').value;
-            const insta_handle = document.getElementById('n-insta').value.replace('@', '');
-            const niche = document.getElementById('n-niche').value;
-            const username = document.getElementById('n-username').value;
-            const password = document.getElementById('n-password').value;
-
-            if (name && username && password && insta_handle) {
-                const { error } = await supabase.from('companies').insert([{ name, insta_handle, niche, username, password }]);
-                if (error) alert("Erro: " + error.message);
-                modal.style.display = 'none';
-                loadCompanies();
-            } else {
-                alert("Preencha tudo!");
-            }
-        };
-
+    window.del = async (id) => {
+        if (!confirm("Remover esta conta?")) return;
+        await db.from('companies').delete().eq('id', id);
         loadCompanies();
-    </script>
+    };
+
+    document.getElementById('new-access').onclick = () => modal.style.display = 'flex';
+    document.getElementById('cancel').onclick = () => modal.style.display = 'none';
+
+    document.getElementById('save').onclick = async () => {
+        const name = document.getElementById('n-name').value;
+        const insta_handle = document.getElementById('n-insta').value.replace('@', '');
+        const niche = document.getElementById('n-niche').value;
+        const username = document.getElementById('n-username').value;
+        const password = document.getElementById('n-password').value;
+
+        if (name && username && password && insta_handle) {
+            const { error } = await db.from('companies').insert([{ name, insta_handle, niche, username, password }]);
+            if (error) alert("Erro: " + error.message);
+            modal.style.display = 'none';
+            loadCompanies();
+        } else {
+            alert("Preencha tudo!");
+        }
+    };
+
+    loadCompanies();
+</script>
+
 </body>
 </html>
