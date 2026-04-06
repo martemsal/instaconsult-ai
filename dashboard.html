@@ -1,34 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><title>Insights | InstaConsult AI</title>
+    <meta charset="UTF-8"><title>Dashboard | InstaConsult AI</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background: #0a0514; color: white; margin: 0; min-height: 100vh; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
+        .btn-growth { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color: white; border: none; border-radius: 12px; padding: 15px 30px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-growth:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .dashboard-grid { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
+        #status-msg { margin-top: 20px; font-weight: 600; color: #fcb045; }
+    </style>
 </head>
 <body>
-    <div style="padding: 20px;">
-        <nav style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding: 10px 30px;" class="glass">
-            <div style="font-weight: 800; font-size: 1.2rem;">Insta<span>Consult</span>AI</div>
+    <div class="dashboard-grid">
+        <nav>
+            <div style="font-size: 1.5rem; font-weight: 800;">Insta<span>Consult</span>AI</div>
             <div style="display:flex; gap:20px; align-items:center;">
-                <span id="user-display" style="color:var(--text-dim);">...</span>
-                <button id="logout-btn" style="background:none; border:1px solid var(--border); color:white; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
+                <span id="user-display" style="opacity: 0.7;">Olá!</span>
+                <button id="logout-btn" style="background:none; border:1px solid rgba(255,255,255,0.2); color:white; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
             </div>
         </nav>
 
-        <main style="max-width: 900px; margin: 0 auto;">
-            <div id="auth-box" class="glass animate-fade" style="padding:40px; text-align:center;">
-                <h2 style="margin-bottom:15px;">Conecte sua Inteligência</h2>
-                <p style="color:var(--text-dim); margin-bottom:30px;">Habilite a conexão oficial para buscarmos seus insights estratégicos.</p>
-                <button class="btn-growth" id="connect-instagram" style="padding:15px 40px;">CONECTAR INSTAGRAM OFICIAL</button>
+        <main style="text-align: center;">
+            <!-- Estado Inicial: Conectar Instagram -->
+            <div id="auth-box" class="glass" style="padding: 60px 40px;">
+                <h1 style="margin-bottom: 10px;">Diagnóstico Estratégico</h1>
+                <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px; font-size: 1.1rem;">Conecte sua conta oficial para que nossa IA gere o seu Plano de Ação.</p>
+                <button class="btn-growth" id="connect-instagram">CONECTAR INSTAGRAM OFICIAL</button>
             </div>
 
-            <div id="sync-box" class="glass animate-fade" style="padding:40px; text-align:center; display:none;">
-                <div style="background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); padding:15px; border-radius:12px; display:inline-block; margin-bottom:20px;">
-                    <span style="color:#00ff88; font-weight:700;">✓ Conta Vinculada:</span> <span id="insta-target"></span>
+            <!-- Estado Conectado: Sincronizar Insights -->
+            <div id="sync-box" class="glass" style="padding: 60px 40px; display: none;">
+                <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 15px 30px; border-radius: 100px; display: inline-block; margin-bottom: 30px;">
+                    <span style="color: #00ff88; font-weight: 800;">✓ CONTA VINCULADA:</span> <span id="insta-handle" style="font-weight: 600;">@</span>
                 </div>
-                <h2>Diagnóstico Pronto</h2>
-                <button class="btn-growth" id="start-sync" style="margin-top:20px; padding:15px 40px;">SINCRONIZAR INSIGHTS AGORA</button>
-                <p id="status-msg" style="margin-top:15px; color:var(--accent); display:none;"></p>
+                <h2 style="margin-bottom: 10px;">Pronta para a próxima fase?</h2>
+                <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Sincronize suas métricas para que nossa IA gere o diagnóstico e o plano de crescimento.</p>
+                <button class="btn-growth" id="start-sync" style="background: #a855f7;">SINCRONIZAR INSIGHTS AGORA</button>
+                <div id="status-msg" style="display: none;"></div>
             </div>
         </main>
     </div>
@@ -39,42 +51,71 @@
         const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
         const db = window.supabase.createClient(SURL, SKEY);
 
+        const APP_ID = "1534487318249003"; 
+        const REDIRECT_URI = "https://instaconsult-ai.vercel.app/dashboard.html";
+
         const company = JSON.parse(localStorage.getItem('current_company'));
         if (!company) window.location.href = 'login.html';
 
-        document.getElementById('user-display').textContent = company.name;
+        document.getElementById('user-display').textContent = `Olá, ${company.name}`;
 
-        // Controle de visibilidade
+        // Lógica de Visibilidade dos Blocos
         if (company.is_oauth_connected) {
             document.getElementById('auth-box').style.display = 'none';
             document.getElementById('sync-box').style.display = 'block';
-            document.getElementById('insta-target').textContent = '@' + company.insta_handle;
+            document.getElementById('insta-handle').textContent = '@' + company.instah_handle || '@' + company.insta_handle;
         }
 
-        // Botão de Conectar
-        document.getElementById('connect-instagram').onclick = async () => {
-            console.log("Conectando...");
-            const { error } = await db.from('companies').update({ is_oauth_connected: true }).eq('id', company.id);
+        // Lógica de Retorno do OAuth (Capturar o "code" do Facebook)
+        const code = new URLSearchParams(window.location.search).get('code');
+        if (code) {
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('sync-box').style.display = 'block';
+            updateAuthStatus();
+        }
+
+        async function updateAuthStatus() {
+            await db.from('companies').update({ is_oauth_connected: true }).eq('id', company.id);
+            company.is_oauth_connected = true;
+            localStorage.setItem('current_company', JSON.stringify(company));
+            window.location.href = 'dashboard.html'; 
+        }
+
+        document.getElementById('connect-instagram').onclick = () => {
+            window.location.href = `https://api.instagram.com/oauth/authorize?client_id=${APP_ID}&redirect_uri=${REDIRECT_URI}&scope=user_profile,user_media&response_type=code`;
+        };
+
+        // Botão de Sincronizar com o Python Cloud
+        document.getElementById('start-sync').onclick = async () => {
+            const btn = document.getElementById('start-sync');
+            const status = document.getElementById('status-msg');
+            btn.style.display = 'none';
+            status.style.display = 'block';
+            status.textContent = 'Enviando dados para o servidor de Inteligência Artificial...';
+
+            const { error } = await db.from('companies').update({ analysis_pending: true, analysis_error: null }).eq('id', company.id);
             if (!error) {
-                company.is_oauth_connected = true;
-                localStorage.setItem('current_company', JSON.stringify(company));
-                location.reload();
+                status.textContent = 'Diagnóstico em progresso. Isso pode levar até 2 minutos...';
+                checkStatus();
             }
         };
 
-        // Botão de Sincronizar (Aqui entra a lógica da API depois)
-        document.getElementById('start-sync').onclick = () => {
-            const status = document.getElementById('status-msg');
-            status.style.display = 'block';
-            status.textContent = 'Iniciando análise via Meta Graph API...';
-            // Em breve: chamada para o seu backend python
-        };
+        function checkStatus() {
+            const poll = setInterval(async () => {
+                const { data } = await db.from('companies').select('*').eq('id', company.id).single();
+                if (data && !data.analysis_pending) {
+                    clearInterval(poll);
+                    if (data.analysis_error) {
+                        alert("Erro na análise: " + data.analysis_error);
+                        location.reload();
+                    } else {
+                        window.location.href = 'results.html';
+                    }
+                }
+            }, 3000);
+        }
 
-        // Botão de Sair
-        document.getElementById('logout-btn').onclick = () => {
-            localStorage.removeItem('current_company');
-            window.location.href = 'login.html';
-        };
+        document.getElementById('logout-btn').onclick = () => { localStorage.removeItem('current_company'); window.location.href = 'login.html'; };
     </script>
 </body>
 </html>
