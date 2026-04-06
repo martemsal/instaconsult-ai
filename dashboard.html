@@ -1,50 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><title>Dashboard | InstaConsult AI</title>
+    <meta charset="UTF-8"><title>Insights | InstaConsult AI</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-grid">
-        <main class="main-content">
-            <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-                <h1 id="company-greeting">Bem-vinda!</h1>
+    <div style="padding: 20px;">
+        <nav style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding: 10px 30px;" class="glass">
+            <div style="font-weight: 800; font-size: 1.2rem;">Insta<span>Consult</span>AI</div>
+            <div style="display:flex; gap:20px; align-items:center;">
+                <span id="user-display" style="color:var(--text-dim);">...</span>
                 <button id="logout-btn" style="background:none; border:1px solid var(--border); color:white; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
-            </header>
-            <div id="auth-section" class="glass" style="padding:40px; text-align:center;">
-                <button class="btn-growth" id="connect-instagram">CONECTAR INSTAGRAM OFICIAL</button>
-                <p id="status-feedback" style="margin-top:15px; display:none;"></p>
             </div>
-            <div id="analysis-section" class="glass" style="padding:40px; text-align:center; display:none;">
-                <h2>Análise Pronta para <span id="sync-target"></span></h2>
-                <button class="btn-growth" id="start-analysis" style="margin-top:20px;">SINCRONIZAR INSIGHTS</button>
+        </nav>
+
+        <main style="max-width: 900px; margin: 0 auto;">
+            <div id="auth-box" class="glass animate-fade" style="padding:40px; text-align:center;">
+                <h2 style="margin-bottom:15px;">Conecte sua Inteligência</h2>
+                <p style="color:var(--text-dim); margin-bottom:30px;">Habilite a conexão oficial para buscarmos seus insights estratégicos.</p>
+                <button class="btn-growth" id="connect-instagram" style="padding:15px 40px;">CONECTAR INSTAGRAM OFICIAL</button>
+            </div>
+
+            <div id="sync-box" class="glass animate-fade" style="padding:40px; text-align:center; display:none;">
+                <div style="background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); padding:15px; border-radius:12px; display:inline-block; margin-bottom:20px;">
+                    <span style="color:#00ff88; font-weight:700;">✓ Conta Vinculada:</span> <span id="insta-target"></span>
+                </div>
+                <h2>Diagnóstico Pronto</h2>
+                <button class="btn-growth" id="start-sync" style="margin-top:20px; padding:15px 40px;">SINCRONIZAR INSIGHTS AGORA</button>
+                <p id="status-msg" style="margin-top:15px; color:var(--accent); display:none;"></p>
             </div>
         </main>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = "https://aokhxnwaqhdokgncfejn.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
+        const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
+        const db = window.supabase.createClient(SURL, SKEY);
 
         const company = JSON.parse(localStorage.getItem('current_company'));
         if (!company) window.location.href = 'login.html';
 
-        document.getElementById('company-greeting').textContent = `Bem-vinda, ${company.name}`;
+        document.getElementById('user-display').textContent = company.name;
+
+        // Controle de visibilidade
         if (company.is_oauth_connected) {
-            document.getElementById('auth-section').style.display = 'none';
-            document.getElementById('analysis-section').style.display = 'block';
-            document.getElementById('sync-target').textContent = '@' + company.insta_handle;
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('sync-box').style.display = 'block';
+            document.getElementById('insta-target').textContent = '@' + company.insta_handle;
         }
 
+        // Botão de Conectar
         document.getElementById('connect-instagram').onclick = async () => {
-            await supabase.from('companies').update({ is_oauth_connected: true }).eq('id', company.id);
-            company.is_oauth_connected = true;
-            localStorage.setItem('current_company', JSON.stringify(company));
-            location.reload();
+            console.log("Conectando...");
+            const { error } = await db.from('companies').update({ is_oauth_connected: true }).eq('id', company.id);
+            if (!error) {
+                company.is_oauth_connected = true;
+                localStorage.setItem('current_company', JSON.stringify(company));
+                location.reload();
+            }
         };
 
-        document.getElementById('logout-btn').onclick = () => { localStorage.removeItem('current_company'); window.location.href = 'login.html'; };
+        // Botão de Sincronizar (Aqui entra a lógica da API depois)
+        document.getElementById('start-sync').onclick = () => {
+            const status = document.getElementById('status-msg');
+            status.style.display = 'block';
+            status.textContent = 'Iniciando análise via Meta Graph API...';
+            // Em breve: chamada para o seu backend python
+        };
+
+        // Botão de Sair
+        document.getElementById('logout-btn').onclick = () => {
+            localStorage.removeItem('current_company');
+            window.location.href = 'login.html';
+        };
     </script>
 </body>
 </html>
