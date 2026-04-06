@@ -1,210 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel da Empresa | InstaConsult AI</title>
+    <meta charset="UTF-8"><title>Dashboard | InstaConsult AI</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        .dashboard-container {
-            max-width: 1000px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-
-        .welcome-header {
-            margin-bottom: 40px;
-        }
-
-        .action-card {
-            padding: 40px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-            font-size: 0.9rem;
-        }
-    </style>
 </head>
-
-<body style="padding: 20px;">
-    <nav
-        style="background: rgba(0,0,0,0.3); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-        <div style="font-weight: 700; font-size: 1.2rem; color: var(--primary);">Insta<span
-                style="color:white;">Consult</span>AI</div>
-        <div style="display: flex; gap: 20px;">
-            <a href="#" style="color: white; text-decoration: none; font-weight: 600;">Home</a>
-            <a href="#" style="color: var(--text-dim); text-decoration: none;">Histórico</a>
-        </div>
-        <button id="logout-btn"
-            style="background: transparent; border: 1px solid var(--border); color: white; padding: 5px 15px; border-radius: 8px; cursor: pointer;">Sair</button>
-    </nav>
-    <div class="dashboard-container animate-fade">
-        <header class="welcome-header">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1 id="company-greeting">Carregando...</h1>
-                    <p style="color: var(--text-dim);">Conta Instagram Autorizada: <strong style="color:var(--primary);"
-                            id="display-insta">---</strong></p>
-                </div>
-                <div class="status-badge">Conta Ativa</div>
+<body>
+    <div class="dashboard-grid">
+        <main class="main-content">
+            <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
+                <h1 id="company-greeting">Bem-vinda!</h1>
+                <button id="logout-btn" style="background:none; border:1px solid var(--border); color:white; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
+            </header>
+            <div id="auth-section" class="glass" style="padding:40px; text-align:center;">
+                <button class="btn-growth" id="connect-instagram">CONECTAR INSTAGRAM OFICIAL</button>
+                <p id="status-feedback" style="margin-top:15px; display:none;"></p>
             </div>
-        </header>
-
-        <main>
-            <div class="action-card glass">
-                <h2 style="margin-bottom: 15px;">� Conexão Oficial Meta API</h2>
-                <p
-                    style="color: var(--text-dim); margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
-                    Para acessar seus Insights Privados (Alcance, Visitas, Seguidores e Dados Demográficos) com total
-                    segurança, conecte sua conta através da integração oficial do Instagram. Nós não teremos acesso à
-                    sua senha.
-                </p>
-
-                <div id="status-feedback" style="margin-bottom: 20px; color: var(--accent); display: none;"></div>
-
-                <div id="auth-section">
-                    <button class="btn-growth" id="connect-instagram"
-                        style="font-size: 1.1rem; padding: 15px 40px; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); border: none;">
-                        CONECTAR COM INSTAGRAM
-                    </button>
-                </div>
-
-                <div id="analysis-section" style="display: none; margin-top: 20px;">
-                    <div
-                        style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); border-radius: 12px; padding: 15px; display: inline-block; margin-bottom: 20px;">
-                        <span style="color:#00ff88; font-weight:bold;">✓ Conta Sincronizada:</span> <span
-                            id="sync-target"></span>
-                    </div><br>
-                    <button class="btn-growth" id="start-analysis"
-                        style="font-size: 1.1rem; padding: 15px 40px; background: var(--primary);">
-                        SINCRONIZAR INSIGHTS AGORA
-                    </button>
-                </div>
+            <div id="analysis-section" class="glass" style="padding:40px; text-align:center; display:none;">
+                <h2>Análise Pronta para <span id="sync-target"></span></h2>
+                <button class="btn-growth" id="start-analysis" style="margin-top:20px;">SINCRONIZAR INSIGHTS</button>
             </div>
-
-            <section
-                style="margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <div class="glass" style="padding: 20px;">
-                    <h3>Último Relatório</h3>
-                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Nenhum diagnóstico realizado
-                        ainda.</p>
-                </div>
-                <div class="glass" style="padding: 20px;">
-                    <h3>Dicas do Nicho</h3>
-                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 10px;">Aguardando detecção de
-                        nicho.</p>
-                </div>
-            </section>
         </main>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = "https://aokhxnwaqhdokgncfejn.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const companyStr = localStorage.getItem('current_company');
-        if (!companyStr) {
-            window.location.href = 'login.html';
-        }
+        const company = JSON.parse(localStorage.getItem('current_company'));
+        if (!company) window.location.href = 'login.html';
 
-        const company = JSON.parse(companyStr);
-        document.getElementById('display-insta').textContent = company.insta_handle || '---';
         document.getElementById('company-greeting').textContent = `Bem-vinda, ${company.name}`;
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('current_company');
-            window.location.href = 'login.html';
-        });
-
-        const connectBtn = document.getElementById('connect-instagram');
-        const startBtn = document.getElementById('start-analysis');
-        const feedback = document.getElementById('status-feedback');
-        const authSection = document.getElementById('auth-section');
-        const analysisSection = document.getElementById('analysis-section');
-        const syncTarget = document.getElementById('sync-target');
-
-        // UI State check
         if (company.is_oauth_connected) {
-            authSection.style.display = 'none';
-            analysisSection.style.display = 'block';
-            syncTarget.textContent = '@' + company.insta_handle;
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('analysis-section').style.display = 'block';
+            document.getElementById('sync-target').textContent = '@' + company.insta_handle;
         }
 
-        connectBtn.addEventListener('click', async () => {
-            feedback.style.display = 'block';
-            feedback.textContent = 'Conectando ao Meta API...';
+        document.getElementById('connect-instagram').onclick = async () => {
+            await supabase.from('companies').update({ is_oauth_connected: true }).eq('id', company.id);
+            company.is_oauth_connected = true;
+            localStorage.setItem('current_company', JSON.stringify(company));
+            location.reload();
+        };
 
-            setTimeout(async () => {
-                const { error } = await supabase
-                    .from('companies')
-                    .update({ is_oauth_connected: true })
-                    .eq('id', company.id);
-
-                if (error) {
-                    alert("Erro ao conectar: " + error.message);
-                    return;
-                }
-
-                company.is_oauth_connected = true;
-                localStorage.setItem('current_company', JSON.stringify(company));
-
-                feedback.style.color = '#00ff88';
-                feedback.textContent = 'Conexão Estabelecida!';
-                setTimeout(() => location.reload(), 1000);
-            }, 1500);
-        });
-
-        startBtn.addEventListener('click', async () => {
-            startBtn.disabled = true;
-            startBtn.innerHTML = 'SINCRONIZANDO...';
-            feedback.style.display = 'block';
-            feedback.style.color = 'white';
-            feedback.textContent = 'Buscando métricas oficiais via Graph API...';
-
-            const { error } = await supabase
-                .from('companies')
-                .update({ analysis_pending: true, analysis_error: null })
-                .eq('id', company.id);
-
-            if (error) {
-                alert("Erro: " + error.message);
-                startBtn.disabled = false;
-                return;
-            }
-
-            let poll = setInterval(async () => {
-                const { data, error } = await supabase
-                    .from('companies')
-                    .select('*')
-                    .eq('id', company.id)
-                    .single();
-
-                if (data && data.analysis_error) {
-                    clearInterval(poll);
-                    feedback.style.color = '#ff4444';
-                    feedback.textContent = data.analysis_error;
-                    startBtn.disabled = false;
-                    startBtn.innerHTML = 'TENTAR NOVAMENTE';
-                } else if (data && !data.analysis_pending) {
-                    clearInterval(poll);
-                    feedback.style.color = '#00ff88';
-                    feedback.textContent = 'Relatório Concluído!';
-                    setTimeout(() => window.location.href = 'results.html', 1000);
-                }
-            }, 3000);
-        });
+        document.getElementById('logout-btn').onclick = () => { localStorage.removeItem('current_company'); window.location.href = 'login.html'; };
     </script>
 </body>
-
 </html>
