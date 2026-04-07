@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +38,9 @@
             letter-spacing: -1px;
         }
 
-        .logo span { color: #833ab4; }
+        .logo span {
+            color: #833ab4;
+        }
 
         input {
             width: 100%;
@@ -89,55 +92,62 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="glass">
         <div class="logo">InstaConsult<span>AI</span></div>
         <h2 style="margin-bottom: 30px; font-weight: 400; opacity: 0.8;">Portal do Cliente</h2>
-        
+
         <input type="text" id="user-login" placeholder="Seu usuário">
         <input type="password" id="user-pass" placeholder="Sua senha">
-        
+
         <button onclick="handleLogin()" class="btn-access">ACESSAR PAINEL</button>
 
         <p id="error-msg">❌ Usuário ou senha incorretos</p>
-        
+
         <div style="margin-top: 40px; font-size: 0.8rem; opacity: 0.4;">
             &copy; 2024 InstaConsult AI - Todos os direitos reservados.
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
-    const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
-    
-    // CORREÇÃO: Inicializando o cliente corretamente
-    const _supabase = supabase.createClient(SURL, SKEY);
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
+        const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
 
-    async function handleLogin() {
-        const user = document.getElementById('user-login').value;
-        const pass = document.getElementById('user-pass').value;
+        // CORREÇÃO: Inicializando o cliente corretamente
+        const _supabase = supabase.createClient(SURL, SKEY);
 
-        if(!user || !pass) return;
+        async function handleLogin() {
+            const user = document.getElementById('user-login').value;
+            const pass = document.getElementById('user-pass').value;
 
-        // Tenta buscar a empresa no Supabase
-        const { data, error } = await _supabase
-            .from('companies')
-            .select('*')
-            .eq('user_login', user)
-            .eq('user_pass', pass)
-            .single();
+            console.log("Tentando login para:", user); // Diagnóstico
 
-        if (data) {
-            localStorage.setItem('current_company', JSON.stringify(data));
-            window.location.href = 'dashboard.html'; // Agora vai!
-        } else {
-            const err = document.getElementById('error-msg');
-            err.style.display = 'block';
-            setTimeout(() => err.style.display = 'none', 3000);
+            const { data, error } = await _supabase
+                .from('companies')
+                .select('*')
+                .eq('user_login', user)
+                .eq('user_pass', pass)
+                .single();
+
+            if (error) {
+                console.error("Erro do Supabase:", error.message); // Veremos o erro aqui
+            }
+
+            if (data) {
+                console.log("Sucesso! Empresa encontrada:", data.name);
+                localStorage.setItem('current_company', JSON.stringify(data));
+                window.location.href = 'dashboard.html';
+            } else {
+                const err = document.getElementById('error-msg');
+                err.style.display = 'block';
+                setTimeout(() => err.style.display = 'none', 3000);
+            }
         }
-    }
-</script>
+
+    </script>
 
 </body>
+
 </html>
