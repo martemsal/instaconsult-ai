@@ -1,15 +1,9 @@
 import json
 
-def handler(request):
-    # O Dashboard espera "completed" no status para avançar
+def handler(event, context=None):
     return {
         "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps({
-            "status": "completed",
-            "message": "Analise Concluida com Sucesso!"
-        })
+        "headers": {"Content-Type": "application/json"},
+        "body": json.dumps({"status": "completed"})
     }
 
