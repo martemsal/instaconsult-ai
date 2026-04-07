@@ -5,53 +5,69 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="login-page">
-    <div class="login-card glass animate-fade" style="width:400px; margin: 150px auto; padding:40px; text-align:center;">
-        <div class="logo" style="font-size:2rem; font-weight:800;">Insta<span>Consult</span>AI</div>
-        <p style="color: var(--text-dim); margin-bottom: 30px;">Acesse seu painel estratégico</p>
-        <form id="login-form">
-            <input type="text" id="login-user" class="form-input" placeholder="Seu usuário" style="margin-bottom:15px; width:100%; border-radius:12px; padding:12px; background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1);" required>
-            <input type="password" id="login-pass" class="form-input" placeholder="Sua senha" style="margin-bottom:15px; width:100%; border-radius:12px; padding:12px; background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1);" required>
-            <button type="submit" class="btn-growth" style="width:100%; padding:12px; border-radius:12px; background:var(--primary); color:white; font-weight:700; cursor:pointer; border:none;">ACESSAR PAINEL</button>
-        </form>
+<body style="background: #0a0514; color:white; font-family: 'Outfit'; height:100vh; display:flex; align-items:center; justify-content:center; margin:0;">
+
+    <!-- SDK do Facebook -->
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v18.0&appId=1263115808730078"></script>
+
+    <div class="glass" style="padding: 40px; width: 350px; text-align:center;">
+        <h2 style="margin-bottom: 30px;">Acesso ao Painel</h2>
+        
+        <input type="text" id="user-login" placeholder="Usuário" style="width:100%; padding:15px; border-radius:10px; border:1px solid #333; background:rgba(255,255,255,0.05); color:white; margin-bottom:15px;">
+        <input type="password" id="user-pass" placeholder="Senha" style="width:100%; padding:15px; border-radius:10px; border:1px solid #333; background:rgba(255,255,255,0.05); color:white; margin-bottom:25px;">
+        
+        <button onclick="handleLogin()" class="btn-growth" style="width:100%; margin-bottom:20px;">ENTRAR</button>
+
+        <div style="margin: 20px 0; opacity: 0.3; font-size: 0.8rem;">OU CONECTE VIA META</div>
+
+        <!-- Botão Oficial Facebook -->
+        <div class="fb-login-button" 
+             data-width="320" 
+             data-size="large" 
+             data-button-type="continue_with" 
+             data-layout="default" 
+             data-auto-logout-link="false" 
+             data-use-continue-as="true"
+             onlogin="checkLoginState();"></div>
+
+        <p id="error-msg" style="color:#ff4444; margin-top:15px; display:none; font-size:0.9rem;">Credenciais inválidas</p>
     </div>
 
-    <!-- Script do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
         const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
-        
-        // Inicializando Database com nome diferente para evitar conflitos
-        const authDb = window.supabase.createClient(SURL, SKEY);
+        const supabase = supabase.createClient(SURL, SKEY);
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const u = document.getElementById('login-user').value;
-            const p = document.getElementById('login-pass').value;
+        async function handleLogin() {
+            const user = document.getElementById('user-login').value;
+            const pass = document.getElementById('user-pass').value;
 
-            console.log("Tentando login para:", u);
-
-            const { data, error } = await authDb.from('companies')
+            const { data, error } = await supabase
+                .from('companies')
                 .select('*')
-                .eq('username', u)
-                .eq('password', p)
+                .eq('user_login', user)
+                .eq('user_pass', pass)
                 .single();
-            
-            if (error) {
-                console.error("Erro no login:", error.message);
-                alert('Usuário ou senha incorretos.');
-                return;
-            }
 
             if (data) {
-                console.log("Login bem-sucedido!");
                 localStorage.setItem('current_company', JSON.stringify(data));
                 window.location.href = 'dashboard.html';
             } else {
-                alert('Usuário ou senha incorretos.');
+                document.getElementById('error-msg').style.display = 'block';
             }
-        });
+        }
+
+        // Função do Facebook
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    // Aqui você salvaria o token no banco se quisesse automatizar tudo
+                    window.location.href = 'dashboard.html';
+                }
+            });
+        }
     </script>
 </body>
 </html>
