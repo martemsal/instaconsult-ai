@@ -44,6 +44,32 @@
         if (!company) window.location.href = 'login.html';
         document.getElementById('user-display').textContent = `Olá, ${company.name}`;
 
+        /* Substitua o trecho onde tem o onclick do botão start-sync por este debaixo */
+
+document.getElementById('start-sync').onclick = async () => {
+    const btn = document.getElementById('start-sync');
+    const status = document.getElementById('status-msg');
+    
+    btn.style.display = 'none';
+    status.style.display = 'block';
+    
+    // Passo 2: Simulando o processamento pesado da IA de forma visual
+    status.textContent = 'Iniciando Scanner de IA via Meta Graph...';
+    
+    setTimeout(() => {
+        status.textContent = 'Analizando métricas de @' + company.insta_handle + '...';
+    }, 1500);
+
+    setTimeout(() => {
+        status.textContent = 'Gerando Plano de Ação Personalizado...';
+    }, 3000);
+
+    setTimeout(() => {
+        status.textContent = 'Diagnóstico Finalizado! Redirecionando...';
+        // REDIRECIONA DIRETO PARA O RESULTADOS
+        setTimeout(() => window.location.href = 'results.html', 1000);
+    }, 4500);
+};
         document.getElementById('start-sync').onclick = async () => {
             const btn = document.getElementById('start-sync');
             const status = document.getElementById('status-msg');
