@@ -37,6 +37,11 @@
     </div>
 
     <script>
+    /* TRAVA DE SEGURANÇA: Só entra quem estiver logado */
+if (!localStorage.getItem('current_company')) {
+    window.location.href = 'login.html';
+}
+
         const company = JSON.parse(localStorage.getItem('current_company'));
         if (!company) window.location.href = 'login.html';
         document.getElementById('user-display').textContent = `Olá, ${company.name}`;
