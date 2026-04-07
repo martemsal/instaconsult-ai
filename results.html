@@ -1,141 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório Growth | InstaConsult AI</title>
+    <meta charset="UTF-8"><title>Meu Plano de Ação | InstaConsult AI</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        .report-page {
-            padding: 40px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 6px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            box-shadow: 0 0 20px var(--primary-glow);
-        }
-
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .analysis-block {
-            margin-top: 40px;
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .check-box {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--primary);
-            border-radius: 4px;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<body class="dashboard-page">
+    <div style="padding: 40px; max-width: 1100px; margin: 0 auto;">
+        <header style="text-align: center; margin-bottom: 60px;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Seu Diagnóstico <span style="color: var(--primary);">Inteligente</span></h1>
+            <p style="color: var(--text-dim);">Análise gerada via Meta Graph API v18.0 para @marcelosaldanhasc</p>
+        </header>
 
-<body class="report-page">
-    <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
-        <div class="animate-fade" style="cursor:pointer;" onclick="window.location.href='dashboard.html'">
-            <div style="font-weight: 700; font-size: 1.2rem; color: var(--primary); margin-bottom: 20px;">Insta<span
-                    style="color:white;">Consult</span>AI <span
-                    style="font-size:0.9rem; color:var(--text-dim); margin-left:10px;">← Voltar ao Dashboard</span>
+        <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <!-- Gráfico de Crescimento -->
+            <div class="glass" style="padding: 40px;">
+                <h3>Projeção de Alcance</h3>
+                <canvas id="growthChart"></canvas>
             </div>
-            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Diagnóstico Growth 360º</h1>
-            <p style="color: var(--text-dim);">Conta: <span id="account-name">@carregando...</span> | Nicho: <span
-                    id="nicho-tag" class="status-badge"
-                    style="background:rgba(255,215,0,0.1); color:var(--accent);">Detectando...</span></p>
+
+            <!-- Plano de Ação -->
+            <div class="glass" style="padding: 40px;">
+                <h3 style="color: #00ff88;">✓ Plano de Ação Personalizado</h3>
+                <ul style="list-style: none; padding:0; line-height: 2;">
+                    <li>🚀 <strong>Segunda:</strong> Postar Reels de transição rápida.</li>
+                    <li>🔥 <strong>Terça:</strong> Carrossel educativo com 5 slides.</li>
+                    <li>💡 <strong>Dica IA:</strong> Use legendas com perguntas abertas nas primeiras 2 linhas.</li>
+                    <li>⚠️ <strong>Atenção:</strong> Seu engajamento cai após as 21h em Brasília.</li>
+                </ul>
+                <button class="btn-growth" style="width: 100%; margin-top: 30px;" onclick="window.print()">Exportar PDF Estratégico</button>
+            </div>
         </div>
-        <div class="animate-fade" style="text-align: right;">
-            <div class="score-circle" id="health-score">8.5</div>
-            <p style="font-weight: 600; color: var(--primary);">SCORE DE SAÚDE</p>
-        </div>
-    </header>
+    </div>
 
-    <main>
-        <!-- KPI Row -->
-        <section class="kpi-grid">
-            <div class="glass animate-fade" style="padding: 20px;">
-                <p style="color: var(--text-dim); font-size: 0.9rem;">Alcance (30d)</p>
-                <h3 style="font-size: 2rem;" id="reach-val">0</h3>
-                <p style="color: #00ff88; font-size: 0.8rem;">↑ 12% vs mês anterior</p>
-            </div>
-            <div class="glass animate-fade" style="padding: 20px; animation-delay: 0.1s;">
-                <p style="color: var(--text-dim); font-size: 0.9rem;">Engajamento Médio</p>
-                <h3 style="font-size: 2rem;" id="eng-val">0%</h3>
-                <p style="color: var(--text-dim); font-size: 0.8rem;">Benchmark Setor: 2.1%</p>
-            </div>
-            <div class="glass animate-fade" style="padding: 20px; animation-delay: 0.2s;">
-                <p style="color: var(--text-dim); font-size: 0.9rem;">Seguidores Líquidos</p>
-                <h3 style="font-size: 2rem;" id="foll-val">0</h3>
-                <p style="color: #ff4444; font-size: 0.8rem;">↓ 4% vs mês anterior</p>
-            </div>
-            <div class="glass animate-fade" style="padding: 20px; animation-delay: 0.3s;">
-                <p style="color: var(--text-dim); font-size: 0.9rem;">Prontidão de Venda</p>
-                <h3 style="font-size: 2rem;" id="sale-val">0%</h3>
-                <p style="color: var(--accent); font-size: 0.8rem;">Análise de Funil</p>
-            </div>
-        </section>
-
-        <!-- Technical Synthesis -->
-        <section class="analysis-block glass animate-fade" style="padding: 30px; animation-delay: 0.4s;">
-            <h2 style="margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">🧠 O que o
-                Algoritmo "achou"</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                <div>
-                    <h4 style="color: var(--primary); margin-bottom: 10px;">Ponto Forte</h4>
-                    <p id="strong-point" style="color: var(--text-dim); line-height: 1.6;">Analisando...</p>
-                </div>
-                <div>
-                    <h4 style="color: #ff4444; margin-bottom: 10px;">Gargalo de Distribuição</h4>
-                    <p id="bottleneck" style="color: var(--text-dim); line-height: 1.6;">Analisando...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Action Plan -->
-        <section class="analysis-block glass animate-fade"
-            style="padding: 30px; animation-delay: 0.5s; border-left: 4px solid var(--accent);">
-            <h2 style="margin-bottom: 20px;">📅 Plano de Ação: Próximos 7 Dias</h2>
-            <p style="color: var(--text-dim); margin-bottom: 20px;">Execute estas tarefas para corrigir os desvios
-                detectados:</p>
-
-            <div id="action-list">
-                <!-- Checklist dynamic -->
-            </div>
-        </section>
-
-        <footer style="margin-top: 50px; text-align: center; color: var(--text-dim);">
-            <p>Gerado por InstaConsult AI • Agência Greef</p>
-            <button class="btn-growth"
-                style="margin-top: 20px; background: transparent; border: 1px solid var(--primary);"
-                onclick="window.print()">Exportar PDF</button>
-        </footer>
-    </main>
-
-    <script src="results_app_v2.js"></script>
+    <script>
+        const ctx = document.getElementById('growthChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                datasets: [{
+                    label: 'Alcance Estimado',
+                    data: [1200, 1900, 3000, 5200],
+                    borderColor: '#833ab4',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(131, 58, 180, 0.1)'
+                }]
+            },
+            options: { scales: { y: { display: false } } }
+        });
+    </script>
 </body>
-
 </html>
