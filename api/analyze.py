@@ -1,23 +1,24 @@
 import json
-import requests
-import os
 
 def handler(request):
-    # Simulação da IA que o seu scanner.py fazia
-    # Aqui, no futuro, você pode chamar o ChatGPT ou gemini para analisar as legendas
-    
+    # Simulando o tempo de processamento da IA
     analysis_data = {
         "status": "completed",
-        "niche": "Consultoria Digital",
-        "score": 85,
+        "score": 94,
+        "niche": "Expert em Marketing IA",
         "action_plan": [
-            "Postar mais Reels curtos (até 15s) toda terça-feira.",
-            "Usar hashtags de nicho como #consultoriaia #gestao360.",
-            "Remover links externos da bio que não convertem."
+            "Postar Reels com áudio em alta às 18h",
+            "Criar carrossel sobre automação de vendas",
+            "Aumentar interação nos stories em 20%"
         ]
     }
     
+    # Retorna o JSON para o Dashboard avançar
     return {
         "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
         "body": json.dumps(analysis_data)
     }
