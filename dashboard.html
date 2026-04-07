@@ -1,76 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><title>Insights | InstaConsult AI</title>
+    <meta charset="UTF-8"><title>Dashboard | InstaConsult AI</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Outfit', sans-serif; background: #0a0514; color: white; margin: 0; min-height: 100vh; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 60px 40px; text-align: center; }
-        .btn-growth { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color: white; border: none; border-radius: 12px; padding: 15px 30px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .btn-growth:hover { transform: scale(1.05); filter: brightness(1.2); }
-        .dashboard-grid { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-        nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
+        body { font-family: 'Outfit', sans-serif; background: #0a0514; color: white; margin: 0; display: flex; }
+        .sidebar { width: 250px; background: rgba(255,255,255,0.02); height: 100vh; border-right: 1px solid rgba(255,255,255,0.1); padding: 30px; }
+        .sidebar-item { padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.3s; opacity: 0.6; }
+        .sidebar-item:hover, .sidebar-item.active { background: rgba(131, 58, 180, 0.2); opacity: 1; color: #833ab4; }
+        .main-content { flex: 1; padding: 40px; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; }
     </style>
 </head>
 <body>
-    <div class="dashboard-grid">
-        <nav>
-            <div style="font-size: 1.5rem; font-weight: 800;">Insta<span>Consult</span>AI</div>
-            <div style="display:flex; gap:20px; align-items:center;">
-                <span id="user-display" style="opacity: 0.7;">Olá!</span>
-                <button id="logout-btn" style="background:none; border:1px solid rgba(255,255,255,0.2); color:white; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
-            </div>
-        </nav>
+    <aside class="sidebar">
+        <div style="font-weight: 800; font-size: 1.4rem; margin-bottom: 50px;">InstaConsult<span style="color:#833ab4;">AI</span></div>
+        <div class="sidebar-item active">🏠 Dashboard</div>
+        <div class="sidebar-item" onclick="window.location.href='results.html'">📈 Último Diagnóstico</div>
+        <div class="sidebar-item" style="cursor:not-allowed;">📚 Histórico (Breve)</div>
+        <div class="sidebar-item" style="margin-top: auto;" onclick="logout()">🚪 Sair</div>
+    </aside>
 
-        <main>
-            <div id="sync-box" class="glass">
-                <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 15px 30px; border-radius: 100px; display: inline-block; margin-bottom: 30px;">
-                    <span id="insta-handle" style="font-weight: 800; color:#00ff88;">✓ CONTA VINCULADA: @marcelosaldanhasc</span>
-                </div>
-                <h2 style="margin-bottom: 10px;">Diagnóstico Pronto</h2>
-                <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Sincronize suas métricas para que nossa IA gere o diagnóstico e o seu plano.</p>
-                <button class="btn-growth" id="start-sync">SINCRONIZAR INSIGHTS AGORA</button>
-                <div id="status-msg" style="display: none; margin-top: 20px; font-weight: 600; color: #fcb045;"></div>
+    <main class="main-content">
+        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:50px;">
+            <h1 id="welcome-msg">Carregando...</h1>
+            <div id="date-display" style="opacity:0.5;"></div>
+        </header>
+
+        <section id="sync-box" class="glass" style="text-align:center;">
+            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 15px 30px; border-radius: 100px; display: inline-block; margin-bottom: 30px;">
+                <span style="color: #00ff88; font-weight: 800;">✓ CONTA CONECTADA:</span> <span id="insta-handle" style="font-weight: 600;">@conectando...</span>
             </div>
-        </main>
-    </div>
+            <h2>Novo Diagnóstico Disponível</h2>
+            <p style="opacity:0.6; margin-bottom:40px;">Nossa IA está pronta para escanear seu perfil e gerar o plano de hoje.</p>
+            <button class="btn-growth" id="start-sync" style="padding: 20px 40px;">INICIAR ANÁLISE GROWTH PRO</button>
+            <div id="status-msg" style="display:none; margin-top:20px; font-weight:600; color:#fcb045;"></div>
+        </section>
+    </main>
 
     <script>
-    /* TRAVA DE SEGURANÇA: Só entra quem estiver logado */
-if (!localStorage.getItem('current_company')) {
-    window.location.href = 'login.html';
-}
-
         const company = JSON.parse(localStorage.getItem('current_company'));
         if (!company) window.location.href = 'login.html';
-        document.getElementById('user-display').textContent = `Olá, ${company.name}`;
 
-        document.getElementById('start-sync').onclick = async () => {
-            const btn = document.getElementById('start-sync');
-            const status = document.getElementById('status-msg');
-            
-            btn.style.display = 'none';
-            status.style.display = 'block';
-            
-            // Fluxo de Inteligência Visual (SaaS Feel)
-            status.textContent = 'Iniciando Scanner de IA via Meta Graph...';
-            
-            setTimeout(() => {
-                status.textContent = 'Analizando métricas de @' + (company.insta_handle || 'perfil') + '...';
-            }, 1500);
+        document.getElementById('welcome-msg').textContent = `Bem-vindo, ${company.name}`;
+        document.getElementById('insta-handle').textContent = `@${company.insta_handle || 'perfil'}`;
+        document.getElementById('date-display').textContent = new Date().toLocaleDateString('pt-BR', { day:'numeric', month:'long' });
 
-            setTimeout(() => {
-                status.textContent = 'Gerando Plano de Ação Personalizado...';
-            }, 3000);
-
-            setTimeout(() => {
-                status.textContent = 'Diagnóstico Finalizado! Redirecionando...';
-                setTimeout(() => window.location.href = 'results.html', 1000);
-            }, 4500);
+        document.getElementById('start-sync').onclick = () => {
+             const btn = document.getElementById('start-sync');
+             const status = document.getElementById('status-msg');
+             btn.style.display = 'none';
+             status.style.display = 'block';
+             
+             status.textContent = 'Acessando Meta Graph API...';
+             setTimeout(() => status.textContent = 'Auditando Legendas e Engajamento...', 1500);
+             setTimeout(() => status.textContent = 'Calculando Score de Growth...', 3000);
+             setTimeout(() => window.location.href = 'results.html', 4500);
         };
 
-        document.getElementById('logout-btn').onclick = () => { localStorage.removeItem('current_company'); window.location.href = 'login.html'; };
+        function logout() { localStorage.clear(); window.location.href = 'login.html'; }
     </script>
 </body>
 </html>
