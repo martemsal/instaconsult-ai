@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><title>Dashboard | InstaConsult AI</title>
+    <meta charset="UTF-8"><title>Insights | InstaConsult AI</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -9,9 +9,8 @@
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
         .btn-growth { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color: white; border: none; border-radius: 12px; padding: 15px 30px; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn-growth:hover { transform: scale(1.05); filter: brightness(1.2); }
-        .dashboard-grid { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .dashboard-grid { max-width: 1000px; margin: 0 auto; padding: 40px 20px; text-align: center; }
         nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
-        #status-msg { margin-top: 20px; font-weight: 600; color: #fcb045; }
     </style>
 </head>
 <body>
@@ -24,96 +23,55 @@
             </div>
         </nav>
 
-        <main style="text-align: center;">
-            <!-- Estado Inicial: Conectar Instagram -->
-            <div id="auth-box" class="glass" style="padding: 60px 40px;">
-                <h1 style="margin-bottom: 10px;">Diagnóstico Estratégico</h1>
-                <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px; font-size: 1.1rem;">Conecte sua conta oficial para que nossa IA gere o seu Plano de Ação.</p>
-                <button class="btn-growth" id="connect-instagram">CONECTAR INSTAGRAM OFICIAL</button>
-            </div>
-
-            <!-- Estado Conectado: Sincronizar Insights -->
-            <div id="sync-box" class="glass" style="padding: 60px 40px; display: none;">
+        <main>
+            <div id="sync-box" class="glass" style="padding: 60px 40px;">
                 <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 15px 30px; border-radius: 100px; display: inline-block; margin-bottom: 30px;">
-                    <span style="color: #00ff88; font-weight: 800;">✓ CONTA VINCULADA:</span> <span id="insta-handle" style="font-weight: 600;">@</span>
+                    <span id="insta-handle" style="font-weight: 800; color:#00ff88;">✓ CONTA VINCULADA: @marcelosaldanhasc</span>
                 </div>
-                <h2 style="margin-bottom: 10px;">Pronta para a próxima fase?</h2>
-                <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Sincronize suas métricas para que nossa IA gere o diagnóstico e o plano de crescimento.</p>
+                <h2 style="margin-bottom: 10px;">Diagnóstico Pronto</h2>
+                <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Sincronize suas métricas para que nossa IA gere o diagnóstico e o seu plano.</p>
                 <button class="btn-growth" id="start-sync" style="background: #a855f7;">SINCRONIZAR INSIGHTS AGORA</button>
-                <div id="status-msg" style="display: none;"></div>
+                <div id="status-msg" style="display: none; margin-top: 20px; font-weight: 600; color: #fcb045;"></div>
             </div>
         </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
-        const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
-        const db = window.supabase.createClient(SURL, SKEY);
-
-        const APP_ID = "1534487318249003"; 
-        const REDIRECT_URI = "https://instaconsult-ai.vercel.app/dashboard.html";
-
+        const db = window.supabase.createClient("https://aokhxnwaqhdokgncfejn.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60");
         const company = JSON.parse(localStorage.getItem('current_company'));
-        if (!company) window.location.href = 'login.html';
 
+        if (!company) window.location.href = 'login.html';
         document.getElementById('user-display').textContent = `Olá, ${company.name}`;
 
-        // Lógica de Visibilidade dos Blocos
-        if (company.is_oauth_connected) {
-            document.getElementById('auth-box').style.display = 'none';
-            document.getElementById('sync-box').style.display = 'block';
-            document.getElementById('insta-handle').textContent = '@' + company.instah_handle || '@' + company.insta_handle;
-        }
-
-        // Lógica de Retorno do OAuth (Capturar o "code" do Facebook)
-        const code = new URLSearchParams(window.location.search).get('code');
-        if (code) {
-            document.getElementById('auth-box').style.display = 'none';
-            document.getElementById('sync-box').style.display = 'block';
-            updateAuthStatus();
-        }
-
-        async function updateAuthStatus() {
-            await db.from('companies').update({ is_oauth_connected: true }).eq('id', company.id);
-            company.is_oauth_connected = true;
-            localStorage.setItem('current_company', JSON.stringify(company));
-            window.location.href = 'dashboard.html'; 
-        }
-
-        document.getElementById('connect-instagram').onclick = () => {
-            window.location.href = `https://api.instagram.com/oauth/authorize?client_id=${APP_ID}&redirect_uri=${REDIRECT_URI}&scope=user_profile,user_media&response_type=code`;
-        };
-
-        // Botão de Sincronizar com o Python Cloud
         document.getElementById('start-sync').onclick = async () => {
             const btn = document.getElementById('start-sync');
             const status = document.getElementById('status-msg');
             btn.style.display = 'none';
             status.style.display = 'block';
-            status.textContent = 'Enviando dados para o servidor de Inteligência Artificial...';
+            status.textContent = 'Enviando comando para o servidor de Inteligência Artificial...';
 
-            const { error } = await db.from('companies').update({ analysis_pending: true, analysis_error: null }).eq('id', company.id);
-            if (!error) {
-                status.textContent = 'Diagnóstico em progresso. Isso pode levar até 2 minutos...';
-                checkStatus();
+            try {
+                // CHAMA A API ANALYZE COM "Z"
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ company_id: company.id, handle: company.insta_handle })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === "completed") {
+                    status.textContent = 'Análise Concluída! Abrindo Plano de Ação...';
+                    setTimeout(() => window.location.href = 'results.html', 1500);
+                } else {
+                    status.textContent = 'Aguardando servidor de IA...';
+                }
+            } catch (e) {
+                status.textContent = 'Erro ao conectar. Tente novamente em instantes.';
+                btn.style.display = 'block';
             }
         };
-
-        function checkStatus() {
-            const poll = setInterval(async () => {
-                const { data } = await db.from('companies').select('*').eq('id', company.id).single();
-                if (data && !data.analysis_pending) {
-                    clearInterval(poll);
-                    if (data.analysis_error) {
-                        alert("Erro na análise: " + data.analysis_error);
-                        location.reload();
-                    } else {
-                        window.location.href = 'results.html';
-                    }
-                }
-            }, 3000);
-        }
 
         document.getElementById('logout-btn').onclick = () => { localStorage.removeItem('current_company'); window.location.href = 'login.html'; };
     </script>
