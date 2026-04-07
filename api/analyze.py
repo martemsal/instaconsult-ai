@@ -1,13 +1,14 @@
 import json
 
-def handler(request):
-    # O Dashboard espera ver 'status': 'completed'
+def handler(event, context=None):
+    # O Vercel Runtime moderno espera statusCode e body em JSON
     return {
         "statusCode": 200,
         "headers": {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST,OPTIONS"
+            "Access-Control-Allow-Origin": "*"
         },
-        "body": json.dumps({"status": "completed"})
+        "body": json.dumps({
+            "status": "completed"
+        })
     }
