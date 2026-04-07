@@ -9,8 +9,8 @@ class handler(BaseHTTPRequestHandler):
         data = json.loads(post_data)
         
         # Dados do seu App (Vindos do Meta)
-        APP_ID = "1534487318249003"
-        APP_SECRET = "f4cf5b0ca333853089bfb1e632b09ca6"
+        APP_ID = "1263115808730078"
+        APP_SECRET = "1c559de8415adb38711b2b4a38f76606"
         REDIRECT_URI = "https://instaconsult-ai.vercel.app/dashboard.html"
         
         # Troca o "code" por um Token Real
