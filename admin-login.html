@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8"><title>Acesso Restrito | AdminAI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="background: #0a0514; display:flex; align-items:center; justify-content:center; height:100vh;">
+    <div class="glass" style="padding: 40px; width: 350px; text-align:center;">
+        <h2 style="color:white; margin-bottom:30px;">Admin Access</h2>
+        <input type="password" id="admin-pass" placeholder="Senha Mestra" style="width:100%; padding:15px; border-radius:10px; border:1px solid #333; background:rgba(255,255,255,0.05); color:white; margin-bottom:20px;">
+        <button onclick="checkAdmin()" class="btn-growth" style="width:100%;">ENTRAR NO PAINEL</button>
+        <p id="error-msg" style="color:#ff4444; margin-top:15px; display:none; font-size:0.9rem;">Senha Incorreta</p>
+    </div>
+    <script>
+        function checkAdmin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === 'M@rcelo2024#') { // Você pode mudar essa senha master aqui
+                 sessionStorage.setItem('isAdmin', 'true');
+                 window.location.href = 'admin.html';
+            } else {
+                 document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

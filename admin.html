@@ -79,6 +79,12 @@
 
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+
+/* COLOQUE ISSO NO COMEÇO DO SCRIPT DO ADMIN.HTML */
+if (sessionStorage.getItem('isAdmin') !== 'true') {
+    window.location.href = 'admin-login.html';
+}
+
     const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
     const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tnbmNmZWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTE0OTMsImV4cCI6MjA5MTA2NzQ5M30.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
     
