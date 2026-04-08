@@ -1,18 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaConsult AI - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        #msg {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .error {
+            color: #ff6b6b;
+        }
+
+        .success {
+            color: #51cf66;
+        }
+    </style>
 </head>
 
 <body>
-    <button onclick="check()">TESTAR CONEXÃO AGORA</button>
-    <pre id="out"></pre>
+    <div class="login-card">
+        <div class="logo">InstaConsult AI</div>
+        <div class="subtitle">Portal do Cliente</div>
+        <input type="text" id="user" placeholder="Seu usuário" autocomplete="off">
+        <input type="password" id="pass" placeholder="Sua senha">
+        <button onclick="tentarLogar()" class="btn-login" id="btn">ACESSAR PAINEL</button>
+        <div id="msg"></div>
+    </div>
 
     <script>
         const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
         const SKEY = "sb_publishable_slGN_9EvSgmfs-1ilFzO_A_0JXBouTb";
-        const client = supabase.createClient(SURL, SKEY);
+        const _supabase = supabase.createClient(SURL, SKEY);
 
         async function tentarLogar() {
             const u = document.getElementById('user').value.trim();
@@ -20,25 +127,26 @@
             const msg = document.getElementById('msg');
             const btn = document.getElementById('btn');
 
-            if (!u || !p) { msg.className = 'error'; msg.innerText = "⚠️ Digite login e senha"; return; }
+            if (!u || !p) { msg.className = 'error'; msg.innerText = "⚠️ Digite usuário e senha"; return; }
 
-            btn.disabled = true;
-            btn.innerText = "VERIFICANDO...";
+            btn.disabled = true; btn.innerText = "VERIFICANDO..."; msg.innerText = "";
 
             try {
-                // AGORA USANDO O NOME CORRETO: 'username'
+                // CONSULTA COM O NOME CORRETO DA COLUNA: 'username'
                 const { data, error } = await _supabase
                     .from('companies')
                     .select('*')
-                    .eq('username', u) // <-- ERA AQUI O ERRO!
+                    .eq('username', u)
                     .eq('password', p)
                     .maybeSingle();
 
-                if (error) throw error;
+                if (error) {
+                    console.error(error);
+                    throw new Error("Erro de conexão com o banco ou RLS.");
+                }
 
                 if (data) {
-                    msg.className = 'success';
-                    msg.innerText = "✨ Sucesso! Entrando...";
+                    msg.className = 'success'; msg.innerText = "✨ Sucesso! Entrando...";
                     localStorage.setItem('current_company', JSON.stringify(data));
                     setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
                 } else {
@@ -46,13 +154,10 @@
                 }
 
             } catch (e) {
-                msg.className = 'error';
-                msg.innerText = "❌ " + e.message;
-                btn.disabled = false;
-                btn.innerText = "ACESSAR PAINEL";
+                msg.className = 'error'; msg.innerText = "❌ " + e.message;
+                btn.disabled = false; btn.innerText = "ACESSAR PAINEL";
             }
         }
-
     </script>
 </body>
 
