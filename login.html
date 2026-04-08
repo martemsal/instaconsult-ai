@@ -14,26 +14,45 @@
         const SKEY = "sb_publishable_slGN_9EvSgmfs-1ilFzO_A_0JXBouTb";
         const client = supabase.createClient(SURL, SKEY);
 
-        async function check() {
-            const out = document.getElementById('out');
-            out.innerText = "Testando...";
+        async function tentarLogar() {
+            const u = document.getElementById('user').value.trim();
+            const p = document.getElementById('pass').value.trim();
+            const msg = document.getElementById('msg');
+            const btn = document.getElementById('btn');
+
+            if (!u || !p) { msg.className = 'error'; msg.innerText = "⚠️ Digite login e senha"; return; }
+
+            btn.disabled = true;
+            btn.innerText = "VERIFICANDO...";
 
             try {
-                // Tenta ler apenas 1 linha de qualquer empresa
-                const { data, error, status } = await client
+                // AGORA USANDO O NOME CORRETO: 'username'
+                const { data, error } = await _supabase
                     .from('companies')
-                    .select('id, login')
-                    .limit(1);
+                    .select('*')
+                    .eq('username', u) // <-- ERA AQUI O ERRO!
+                    .eq('password', p)
+                    .maybeSingle();
 
-                if (error) {
-                    out.innerText = "ERRO TÉCNICO:\n" + JSON.stringify(error, null, 2) + "\nSTATUS: " + status;
+                if (error) throw error;
+
+                if (data) {
+                    msg.className = 'success';
+                    msg.innerText = "✨ Sucesso! Entrando...";
+                    localStorage.setItem('current_company', JSON.stringify(data));
+                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
                 } else {
-                    out.innerText = "CONEXÃO OK!\nDados recebidos: " + JSON.stringify(data, null, 2);
+                    throw new Error("Usuário ou senha incorretos.");
                 }
+
             } catch (e) {
-                out.innerText = "ERRO FATAL:\n" + e.message;
+                msg.className = 'error';
+                msg.innerText = "❌ " + e.message;
+                btn.disabled = false;
+                btn.innerText = "ACESSAR PAINEL";
             }
         }
+
     </script>
 </body>
 
