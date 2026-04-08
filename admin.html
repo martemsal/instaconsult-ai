@@ -1,241 +1,383 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Admin AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>InstaConsult AI | Admin Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --primary: #8e44ad;
-            --bg: #0a0514;
-            --glass: rgba(255, 255, 255, 0.03);
+            --primary: #8b5cf6;
+            --secondary: #d946ef;
+            --bg: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
         }
 
         body {
-            background: var(--bg);
-            color: white;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(217, 70, 239, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
             font-family: 'Outfit', sans-serif;
+            margin: 0;
             display: flex;
             min-height: 100vh;
-            margin: 0;
         }
 
+        /* Sidebar Stylized */
         .sidebar {
-            width: 280px;
-            background: rgba(0, 0, 0, 0.3);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 40px 20px;
-        }
-
-        .main {
-            flex: 1;
-            padding: 60px;
-        }
-
-        .card {
-            background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th {
-            text-align: left;
-            color: #94a3b8;
-            font-weight: 400;
-            font-size: 0.9rem;
-            padding: 15px;
-        }
-
-        td {
-            padding: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.95rem;
-        }
-
-        .btn-new {
-            background: linear-gradient(45deg, #8b5cf6, #d946ef);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            float: right;
-        }
-
-        .btn-del {
-            color: #ff4444;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .btn-del:hover {
-            text-decoration: underline;
-        }
-
-        /* Modal Style */
-        .modal {
-            display: none;
+            width: 260px;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            height: 100vh;
+        }
+
+        .logo-area {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: 0.3s;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            gap: 12px;
+            font-weight: 500;
         }
 
-        .modal-content {
-            background: #1a1625;
-            padding: 40px;
-            border-radius: 24px;
-            width: 400px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .nav-item.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
         }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.2);
+        .nav-item:hover:not(.active) {
+            background: rgba(255,255,255,0.03);
             color: white;
-            box-sizing: border-box;
         }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 60px 80px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        h2 { font-size: 2.2rem; font-weight: 600; margin: 0; letter-spacing: -1px; }
+        
+        /* Stats Card */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, transparent, rgba(139, 92, 246, 0.05));
+            border-radius: 0 20px 0 100%;
+        }
+
+        .stat-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; margin-top: 8px; }
+
+        /* Table Stylized */
+        .data-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 20px 24px; background: rgba(255,255,255,0.02); color: var(--text-dim); font-weight: 500; font-size: 0.85rem; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 20px 24px; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        tr:hover td { background: rgba(255,255,255,0.01); }
+
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+            color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(139, 92, 246, 0.3); }
+
+        .btn-action { background: none; border: none; cursor: pointer; font-weight: 600; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; transition: 0.2s; }
+        .btn-edit { color: #38bdf8; background: rgba(56, 189, 248, 0.1); margin-right: 8px; }
+        .btn-edit:hover { background: rgba(56, 189, 248, 0.2); }
+        .btn-delete { color: #fb7185; background: rgba(251, 113, 133, 0.1); }
+        .btn-delete:hover { background: rgba(251, 113, 133, 0.2); }
+
+        /* Modal Premium */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .modal-body {
+            background: #111827; border: 1px solid var(--border); border-radius: 28px; width: 440px;
+            padding: 40px; box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+        }
+        .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.5px; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+        input {
+            width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            border-radius: 12px; color: white; font-family: 'Outfit'; font-size: 1rem; box-sizing: border-box; transition: 0.3s;
+        }
+        input:focus { outline: none; border-color: var(--primary); background: rgba(0,0,0,0.5); }
     </style>
 </head>
-
 <body>
-    <div class="sidebar">
-        <h1 style="font-size: 1.5rem; margin-bottom: 50px;">AdminAI</h1>
-        <p style="color: #8b5cf6; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;">Gerenciamento</p>
-        <p>Empresas</p>
-    </div>
 
-    <div class="main">
-        <button class="btn-new" onclick="toggleModal(true)">+ Novo Acesso</button>
-        <h2 style="font-size: 2rem; margin-bottom: 40px;">Controle de Acessos</h2>
-
-        <div class="card">
-            <p style="color: #94a3b8; margin:0">Total de Clientes</p>
-            <h3 id="totalClients" style="font-size: 2.5rem; margin:10px 0 0 0">0</h3>
+    <aside class="sidebar">
+        <div class="logo-area">InstaConsult AI</div>
+        <nav>
+            <a href="#" class="nav-item active">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="#" class="nav-item">
+                <span>🏢</span> Empresas
+            </a>
+            <a href="#" class="nav-item">
+                <span>⚙️</span> Configurações
+            </a>
+        </nav>
+        <div style="margin-top: auto; color: var(--text-dim); font-size: 0.8rem;">
+            v2.4 Production
         </div>
+    </aside>
 
-        <div class="card">
-            <h4 style="margin-top: 0;">Empresas Habilitadas</h4>
+    <main class="main-content">
+        <header>
+            <div>
+                <h2>Gerenciamento de Acessos</h2>
+                <p style="color: var(--text-dim); margin-top: 8px;">Controle estratégico de empresas e permissões</p>
+            </div>
+            <button class="btn-primary" onclick="openModal()">+ Adicionar Empresa</button>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Empresas Ativas</div>
+                <div class="stat-value" id="countActive">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Consultas Mensais</div>
+                <div class="stat-value">1.2k</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Status do Sistema</div>
+                <div class="stat-value" style="font-size: 1.2rem; color: #4ade80;">Online</div>
+            </div>
+        </section>
+
+        <section class="data-card">
             <table>
                 <thead>
                     <tr>
-                        <th>Nome</th>
-                        <th>@ Instagram</th>
+                        <th>Empresa</th>
+                        <th>Instagram</th>
                         <th>Nicho</th>
-                        <th>Usuário Login</th>
-                        <th>Senha</th>
+                        <th>Credenciais</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="companyTable">
-                    <!-- Gerado via JS -->
+                <tbody id="clientsList">
+                    <!-- Gerado Dinamicamente -->
                 </tbody>
             </table>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- Modal Novo Acesso -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <h3>Cadastrar Novo Cliente</h3>
-            <input type="text" id="newName" placeholder="Nome Completo">
-            <input type="text" id="newHandle" placeholder="@ Instagram">
-            <input type="text" id="newNiche" placeholder="Nicho">
-            <input type="text" id="newLogin" placeholder="Usuário para Login">
-            <input type="text" id="newPass" placeholder="Senha">
-            <button onclick="saveCompany()" class="btn-new" style="float:none; width:100%">Salvar Acesso</button>
-            <p onclick="toggleModal(false)"
-                style="text-align:center; color:#94a3b8; cursor:pointer; margin-top:15px; font-size:0.9rem">Cancelar</p>
+    <!-- Modal para Adicionar/Editar -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-body">
+            <div class="modal-header" id="modalTitle">Adicionar Empresa</div>
+            
+            <input type="hidden" id="editId">
+            
+            <div class="form-group">
+                <label>NOME DA EMPRESA</label>
+                <input type="text" id="mName" placeholder="Ex: Agência Digital X">
+            </div>
+
+            <div class="form-group">
+                <label>HANDLE DO INSTAGRAM (SEM @)</label>
+                <input type="text" id="mHandle" placeholder="usuario_insta">
+            </div>
+
+            <div class="form-group">
+                <label>NICHO DE ATUAÇÃO</label>
+                <input type="text" id="mNiche" placeholder="Ex: Marketing Digital">
+            </div>
+
+            <div style="display: flex; gap: 16px; margin-bottom: 30px;">
+                <div style="flex: 1;">
+                    <label>USUÁRIO LOGIN</label>
+                    <input type="text" id="mUser" placeholder="login">
+                </div>
+                <div style="flex: 1;">
+                    <label>SENHA</label>
+                    <input type="text" id="mPass" placeholder="••••••">
+                </div>
+            </div>
+
+            <button class="btn-primary" style="width: 100%;" onclick="saveData()">Confirmar e Salvar</button>
+            <button onclick="closeModal()" style="width: 100%; background: none; border: none; color: var(--text-dim); margin-top: 16px; cursor: pointer;">Cancelar</button>
         </div>
     </div>
 
     <script>
         const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
         const SKEY = "sb_publishable_slGN_9EvSgmfs-1ilFzO_A_0JXBouTb";
-        const supabaseClient = supabase.createClient(SURL, SKEY);
+        const _supabase = supabase.createClient(SURL, SKEY);
 
-        async function loadCompanies() {
-            const { data, error } = await supabaseClient
-                .from('companies')
-                .select('*')
-                .order('created_at', { ascending: false });
+        let activeCompanies = [];
 
+        async function fetchCompanies() {
+            const { data, error } = await _supabase.from('companies').select('*').order('created_at', { ascending: false });
             if (error) return console.error(error);
+            
+            activeCompanies = data;
+            renderList();
+        }
 
-            document.getElementById('totalClients').innerText = data.length;
-            const table = document.getElementById('companyTable');
-            table.innerHTML = data.map(c => `
+        function renderList() {
+            document.getElementById('countActive').innerText = activeCompanies.length;
+            const container = document.getElementById('clientsList');
+            container.innerHTML = activeCompanies.map(c => `
                 <tr>
-                    <td>${c.name}</td>
-                    <td>@${c.insta_handle}</td>
-                    <td>${c.niche}</td>
-                    <td><strong>${c.username || c.login}</strong></td>
-                    <td>${c.password}</td>
-                    <td><button class="btn-del" onclick="deleteCompany('${c.id}')">Remover</button></td>
+                    <td>
+                        <div style="font-weight: 600;">${c.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">ID: ${c.id.substring(0,8)}...</div>
+                    </td>
+                    <td style="color: #a78bfa; font-weight: 500;">@${c.insta_handle}</td>
+                    <td><span class="badge">${c.niche}</span></td>
+                    <td>
+                        <div style="font-size: 0.85rem;">User: <strong>${c.username || c.login}</strong></div>
+                        <div style="font-size: 0.8rem; color: var(--text-dim);">Pass: ${c.password}</div>
+                    </td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editMode('${c.id}')">Editar</button>
+                        <button class="btn-action btn-delete" onclick="deleteCompany('${c.id}')">Remover</button>
+                    </td>
                 </tr>
             `).join('');
         }
 
-        function toggleModal(show) {
-            document.getElementById('modal').style.display = show ? 'flex' : 'none';
+        // Modal Logic
+        function openModal() {
+            document.getElementById('editId').value = "";
+            document.getElementById('modalTitle').innerText = "Adicionar Empresa";
+            document.getElementById('mName').value = "";
+            document.getElementById('mHandle').value = "";
+            document.getElementById('mNiche').value = "";
+            document.getElementById('mUser').value = "";
+            document.getElementById('mPass').value = "";
+            document.getElementById('modal').style.display = 'flex';
         }
 
-        async function saveCompany() {
-            const company = {
-                name: document.getElementById('newName').value,
-                insta_handle: document.getElementById('newHandle').value,
-                niche: document.getElementById('newNiche').value,
-                username: document.getElementById('newLogin').value, // Salva na coluna username
-                password: document.getElementById('newPass').value
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        async function editMode(id) {
+            const c = activeCompanies.find(x => x.id === id);
+            if (!c) return;
+
+            document.getElementById('editId').value = c.id;
+            document.getElementById('modalTitle').innerText = "Editar Empresa";
+            document.getElementById('mName').value = c.name;
+            document.getElementById('mHandle').value = c.insta_handle;
+            document.getElementById('mNiche').value = c.niche;
+            document.getElementById('mUser').value = c.username || c.login;
+            document.getElementById('mPass').value = c.password;
+            
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        async function saveData() {
+            const id = document.getElementById('editId').value;
+            const payload = {
+                name: document.getElementById('mName').value,
+                insta_handle: document.getElementById('mHandle').value,
+                niche: document.getElementById('mNiche').value,
+                username: document.getElementById('mUser').value,
+                password: document.getElementById('mPass').value
             };
 
-            const { error } = await supabaseClient.from('companies').insert([company]);
-            if (error) return alert("Erro ao salvar: " + error.message);
+            if (Object.values(payload).some(v => !v)) return alert("Preencha tudo!");
 
-            alert("Cliente cadastrado!");
-            toggleModal(false);
-            loadCompanies();
+            try {
+                if (id) {
+                    // UPDATE
+                    const { error } = await _supabase.from('companies').update(payload).eq('id', id);
+                    if (error) throw error;
+                    alert("Dados atualizados!");
+                } else {
+                    // INSERT
+                    const { error } = await _supabase.from('companies').insert([payload]);
+                    if (error) throw error;
+                    alert("Nova empresa cadastrada!");
+                }
+                closeModal();
+                fetchCompanies();
+            } catch (e) {
+                alert("Erro: " + e.message);
+            }
         }
 
         async function deleteCompany(id) {
-            if (!confirm("Remover este acesso permanentemente?")) return;
-
-            const { error } = await supabaseClient
-                .from('companies')
-                .delete()
-                .eq('id', id);
-
-            if (error) return alert("Erro ao remover: " + error.message);
-
-            loadCompanies();
+            if (!confirm("Remover permanentemente?")) return;
+            const { error } = await _supabase.from('companies').delete().eq('id', id);
+            if (error) alert(error.message);
+            fetchCompanies();
         }
 
-        loadCompanies();
+        fetchCompanies();
     </script>
 </body>
-
 </html>
