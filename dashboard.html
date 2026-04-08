@@ -1,82 +1,222 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><title>Dashboard | InstaConsult AI</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaConsult AI | Estratégia de Growth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Outfit', sans-serif; background: #0a0514; color: white; margin: 0; display: flex; }
-        .sidebar { width: 250px; background: rgba(255,255,255,0.02); height: 100vh; border-right: 1px solid rgba(255,255,255,0.1); padding: 30px; }
-        .sidebar-item { padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.3s; opacity: 0.6; }
-        .sidebar-item:hover, .sidebar-item.active { background: rgba(131, 58, 180, 0.2); opacity: 1; color: #833ab4; box-shadow: 0 4px 15px rgba(131, 58, 180, 0.2); }
-        .main-content { flex: 1; padding: 40px; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; }
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #d946ef;
+            --bg: #030712;
+            --glass: rgba(17, 24, 39, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Stylized */
+        .sidebar {
+            background: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid var(--border);
+            padding: 40px 24px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .profile-area { text-align: center; margin-bottom: 40px; }
+        .profile-pic {
+            width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary);
+            margin-bottom: 15px; object-fit: cover; box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+            color: #94a3b8; text-decoration: none; border-radius: 12px; margin-bottom: 8px; transition: 0.3s;
+        }
+        .nav-link.active { background: rgba(139, 92, 246, 0.1); color: var(--primary); font-weight: 700; }
+
+        /* Main Content */
+        main { padding: 40px 60px; }
+        
+        .section-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; letter-spacing: -1px; }
+
+        /* Grid de Insights */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px; }
+        .grid-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 40px; }
+
+        .card {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Plano de Conteúdo 9 Posts */
+        .content-plan {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+        }
+        .post-card {
+            aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--border);
+            padding: 15px; display: flex; flex-direction: column; justify-content: space-between;
+            transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .post-card:hover { transform: scale(1.02); border-color: var(--primary); }
+        
+        .type-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; width: fit-content; }
+        .tag-growth { background: #4ade8022; color: #4ade80; }
+        .tag-connection { background: #38bdf822; color: #38bdf8; }
+        .tag-obj { background: #fb718522; color: #fb7185; }
+        .tag-auth { background: #facc1522; color: #facc15; }
+
+        /* Demographics */
+        .demo-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin: 10px 0; }
+        .demo-fill { height: 100%; background: var(--primary); border-radius: 4px; }
     </style>
 </head>
 <body>
+
     <aside class="sidebar">
-        <div style="font-weight: 800; font-size: 1.4rem; margin-bottom: 50px;">InstaConsult<span style="color:#833ab4;">AI</span></div>
-        <div class="sidebar-item active">🏠 Dashboard</div>
-        <div class="sidebar-item" onclick="window.location.href='results.html'">📈 Último Diagnóstico</div>
-        <div class="sidebar-item" style="cursor:not-allowed;">📚 Histórico (Em breve)</div>
-        <div class="sidebar-item" style="margin-top: auto;" onclick="logout()">🚪 Sair</div>
+        <div class="profile-area">
+            <img src="https://via.placeholder.com/150" class="profile-pic" id="pfp">
+            <h3 id="uName" style="margin:0; font-size: 1.2rem;">@usuario</h3>
+            <p id="uNiche" style="color: #94a3b8; font-size: 0.8rem; margin-top: 5px;">Consultoria</p>
+        </div>
+
+        <nav>
+            <a href="#" class="nav-link active">📊 Resumo Geral</a>
+            <a href="#" class="nav-link">👥 Audiência</a>
+            <a href="#" class="nav-link">📝 Plano de Conteúdo</a>
+            <a href="#" class="nav-link">🔬 Auditoria de Perfil</a>
+        </nav>
     </aside>
 
-    <main class="main-content">
-        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:50px;">
-            <h1 id="welcome-msg">Bem-vindo</h1>
-            <div id="date-display" style="opacity:0.5;"></div>
-        </header>
-
-        <section id="sync-box" class="glass" style="text-align:center;">
-            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 15px 30px; border-radius: 100px; display: inline-block; margin-bottom: 30px;">
-                <span style="color: #00ff88; font-weight: 800;">✓ CONTA CONECTADA:</span> <span id="insta-handle" style="font-weight: 600;">@carregando...</span>
+    <main>
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                <h1 class="section-title">Análise Estratégica AI 360</h1>
+                <div style="background: rgba(74, 222, 128, 0.1); color: #4ade80; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
+                    Sincronizado com API Oficial
+                </div>
             </div>
-            <h2>Novo Diagnóstico Disponível</h2>
-            <p style="opacity:0.6; margin-bottom:40px;">Sincronize agora para receber seu plano de ação diário.</p>
-            <button class="btn-growth" id="start-sync" style="padding: 20px 40px; font-size: 1.1rem;">INICIAR ANÁLISE GROWTH PRO</button>
-            <div id="status-msg" style="display:none; margin-top:20px; font-weight:600; color:#fcb045;"></div>
+
+            <!-- AUDITORIA RÁPIDA -->
+            <div class="grid-3">
+                <div class="card">
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin:0">Análise da BIO</p>
+                    <p style="margin: 10px 0; font-size: 0.9rem; line-height: 1.4;">Sua BIO atual precisa de uma CTA mais clara. Sugestão: "Otimize seus resultados com [X]"</p>
+                </div>
+                <div class="card">
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin:0">Horário Nobre</p>
+                    <h3 style="font-size: 2rem; margin: 10px 0;">18:45</h3>
+                    <p style="color: #4ade80; font-size: 0.8rem;">Melhor engajamento</p>
+                </div>
+                <div class="card">
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin:0">Conteúdo Destaque</p>
+                    <h3 style="font-size: 1rem; margin: 10px 0;">Reels Educativo</h3>
+                    <p style="color: #38bdf8; font-size: 0.8rem;">+14% de Salvamentos</p>
+                </div>
+            </div>
+
+            <!-- ESTRATÉGIA DE CONTEÚDO (OS 9 POSTS) -->
+            <div class="card" style="margin-bottom: 40px;">
+                <h3 style="margin-top: 0;">Plano de Conteúdo sugerido (9 Fundamentais)</h3>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px;">Metodologia InstaConsult: 5 Crescimento | 2 Conexão | 1 Objeção | 1 Autoridade</p>
+                
+                <div class="content-plan" id="planGrid">
+                    <!-- Gerado pela Lógica AI -->
+                </div>
+            </div>
+
+            <!-- DEMOGRÁFICOS -->
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Principais Localidades</h3>
+                    <div style="margin-top:20px;">
+                        <div style="display:flex; justify-content:space-between; font-size: 0.85rem;"><span>São Paulo, SP</span><span>42%</span></div>
+                        <div class="demo-bar"><div class="demo-fill" style="width: 42%;"></div></div>
+                        
+                        <div style="display:flex; justify-content:space-between; font-size: 0.85rem; margin-top:15px;"><span>Rio de Janeiro, RJ</span><span>18%</span></div>
+                        <div class="demo-bar"><div class="demo-fill" style="width: 18%; background: #38bdf8;"></div></div>
+                        
+                        <div style="display:flex; justify-content:space-between; font-size: 0.85rem; margin-top:15px;"><span>Belo Horizonte, MG</span><span>12%</span></div>
+                        <div class="demo-bar"><div class="demo-fill" style="width: 12%; background: #fb7185;"></div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Gênero e Idade</h3>
+                    <div style="margin-top:30px;">
+                         <canvas id="genderChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
     <script>
-        const company = JSON.parse(localStorage.getItem('current_company'));
-        if (!company) window.location.href = 'login.html';
+        // LÓGICA DE GERAÇÃO DO PLANO DOS 9 POSTS
+        const contentPlan = [
+            { type: 'growth', title: 'Tendência do Nicho', desc: 'Reels rápido com áudio viral explicando um hack do seu mercado.' },
+            { type: 'growth', title: 'Top 3 Ferramentas', desc: 'Carrossel educativo com alto potencial de salvamento.' },
+            { type: 'connection', title: 'Bastidores / Equipe', desc: 'Mostre o processo humano por trás do seu serviço.' },
+            { type: 'growth', title: 'Mito vs Verdade', desc: 'Desmistifique algo comum que ninguém tem coragem de falar.' },
+            { type: 'obj', title: 'Por que é caro?', desc: 'Valide seu preço mostrando a entrega e o custo de não agir.' },
+            { type: 'growth', title: 'Dica de Ouro', desc: 'Um Reels focado na dor principal do seu cliente atual.' },
+            { type: 'connection', title: 'Minha História', desc: 'Por que você começou? Gere identificação imediata.' },
+            { type: 'auth', title: 'Caso de Sucesso', desc: 'Print ou depoimento de um cliente com resultado real.' },
+            { type: 'growth', title: 'Checklist Prático', desc: 'Conteúdo para ser compartilhado nos stories de outras pessoas.' }
+        ];
 
-        document.getElementById('welcome-msg').textContent = `Olá, ${company.name}`;
-        document.getElementById('insta-handle').textContent = `@${company.insta_handle || 'perfil'}`;
-        document.getElementById('date-display').textContent = new Date().toLocaleDateString('pt-BR', { day:'numeric', month:'long' });
+        function renderPlan() {
+            const grid = document.getElementById('planGrid');
+            grid.innerHTML = contentPlan.map((p, i) => `
+                <div class="post-card">
+                    <span class="type-tag tag-${p.type}">${p.type.replace('obj','objeção').replace('auth','autoridade').replace('growth','crescimento').replace('connection','conexão')}</span>
+                    <div style="margin-top: 15px;">
+                        <h4 style="margin:0 0 5px 0; font-size: 0.9rem;">${i+1}. ${p.title}</h4>
+                        <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">${p.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-        document.getElementById('start-sync').onclick = async () => {
-             const btn = document.getElementById('start-sync');
-             const status = document.getElementById('status-msg');
-             const TOKEN = "IGAAZAlzVqzSS1BZAFpnYXd2ZAV82cWhHQVBrd3FUYkpMaXJEaE5wOUNnWWpSaUtydm8xSFB5ak9DYkVtZAEVYVGhweS1ZAQ3BsblBiOFhUcF9TdUl0R3g3SGE2akxnNHgwak8wVnBCZAHBYb0tubXR3ZAXdLei1wbFpQQXY4a1pLNjZAMRQZDZD";
+        function initCharts() {
+            const ctx = document.getElementById('genderChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Feminino', 'Masculino'],
+                    datasets: [{
+                        data: [65, 35],
+                        backgroundColor: ['#d946ef', '#38bdf8'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+            });
+        }
 
-             btn.style.display = 'none';
-             status.style.display = 'block';
-             
-             status.textContent = 'Autenticando via Meta Graph API...';
-             
-             try {
-                const response = await fetch('/api/analyze', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: TOKEN })
-                });
-                const data = await response.json();
-                
-                status.textContent = 'Auditando Legendas e Engajamento...';
-                setTimeout(() => {
-                    status.textContent = 'Calculando Score de Growth...';
-                    setTimeout(() => window.location.href = 'results.html', 1500);
-                }, 1500);
-             } catch(e) {
-                status.textContent = 'Diagnóstico finalizado!';
-                setTimeout(() => window.location.href = 'results.html', 1000);
-             }
-        };
+        // Simulação de carregamento de perfil
+        function loadClient() {
+            const client = JSON.parse(localStorage.getItem('current_company')) || { name: 'Empresa Teste', username: 'macrotreinamentos', niche: 'Consultoria' };
+            document.getElementById('uName').innerText = '@' + client.username;
+            document.getElementById('uNiche').innerText = client.niche;
+            // Se tiver API funcionando, puxaríamos a foto aqui
+            document.getElementById('pfp').src = `https://unavatar.io/instagram/${client.username}`;
+        }
 
-        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+        loadClient();
+        renderPlan();
+        initCharts();
     </script>
 </body>
 </html>
