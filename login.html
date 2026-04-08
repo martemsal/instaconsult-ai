@@ -34,46 +34,41 @@
     </div>
 
     <script>
-        // CHAVE ATUALIZADA E TESTADA
         const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
         const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tuY2Zlam4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc3NTQ5MTQ5MywiZXhwIjoyMDkxMDY3NDkzfQ.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
         
         const _supabase = supabase.createClient(SURL, SKEY);
 
         async function tentarLogar() {
-            const userVal = document.getElementById('user').value.trim();
-            const passVal = document.getElementById('pass').value.trim();
+            const u = document.getElementById('user').value.trim();
+            const p = document.getElementById('pass').value.trim();
             const msg = document.getElementById('msg');
             const btn = document.getElementById('btn');
 
-            if(!userVal || !passVal) {
-                msg.className = 'error';
-                msg.innerText = "⚠️ Preencha usuário e senha!";
-                return;
-            }
+            if(!u || !p) { msg.className='error'; msg.innerText="⚠️ Digite login e senha"; return; }
 
             btn.disabled = true;
             btn.innerText = "VERIFICANDO...";
             msg.innerText = "";
 
             try {
-                // Busca o usuário na tabela 'companies'
+                // Tenta buscar o usuário verificando as duas colunas possíveis
                 const { data, error } = await _supabase
                     .from('companies')
                     .select('*')
-                    .or(`login.eq.${userVal},user_login.eq.${userVal}`)
-                    .eq('password', passVal)
+                    .or(`login.eq."${u}",user_login.eq."${u}"`)
+                    .eq('password', p)
                     .maybeSingle();
 
                 if (error) throw error;
 
                 if (data) {
                     msg.className = 'success';
-                    msg.innerText = "✨ Sucesso! Redirecionando...";
+                    msg.innerText = "✨ Sucesso! Entrando...";
                     localStorage.setItem('current_company', JSON.stringify(data));
                     setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
                 } else {
-                    throw new Error("Usuário ou senha incorretos.");
+                    throw new Error("Usuário ou senha inválidos.");
                 }
 
             } catch (e) {
