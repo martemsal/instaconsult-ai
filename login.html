@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +8,108 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #8e44ad; --bg: #0f172a; --glass: rgba(255, 255, 255, 0.05); }
-        body { margin: 0; font-family: 'Outfit', sans-serif; background: radial-gradient(circle at top right, #1e1b4b, #0f172a); height: 100vh; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; }
-        .login-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 2.5rem; border-radius: 24px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        .logo { font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; background: linear-gradient(to right, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { color: #94a3b8; margin-bottom: 2rem; font-size: 0.85rem; }
-        .input-group { margin-bottom: 1.2rem; }
-        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 1rem; box-sizing: border-box; transition: 0.3s; }
-        input:focus { outline: none; border-color: #8b5cf6; background: rgba(0,0,0,0.5); }
-        .btn-login { width: 100%; padding: 14px; background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%); border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-login:hover { transform: translateY(-2px); opacity: 0.9; }
-        #msg { margin-top: 15px; font-size: 0.85rem; min-height: 1.2rem; font-weight: 600; }
-        .error { color: #ff6b6b; }
-        .success { color: #51cf66; }
+        :root {
+            --primary: #8e44ad;
+            --bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        #msg {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            min-height: 1.2rem;
+            font-weight: 600;
+        }
+
+        .error {
+            color: #ff6b6b;
+        }
+
+        .success {
+            color: #51cf66;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="login-card">
@@ -34,10 +122,20 @@
     </div>
 
     <script>
+        // TENTE ESTE BLOCO DE SCRIPT NOVO
         const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
         const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFva2h4bndhcWhkb2tuY2Zlam4iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc3NTQ5MTQ5MywiZXhwIjoyMDkxMDY3NDkzfQ.plE22Y2TvUuEWMVtwsDfLxeezP6Wk9zpIhlRgruqf60";
-        
-        const _supabase = supabase.createClient(SURL, SKEY);
+
+        // Teste de inicialização imediata
+        let _supabase;
+        try {
+            _supabase = supabase.createClient(SURL, SKEY, {
+                auth: { persistSession: false }
+            });
+            console.log("Supabase inicializado com sucesso");
+        } catch (e) {
+            console.error("Erro na inicialização:", e);
+        }
 
         async function tentarLogar() {
             const u = document.getElementById('user').value.trim();
@@ -45,22 +143,26 @@
             const msg = document.getElementById('msg');
             const btn = document.getElementById('btn');
 
-            if(!u || !p) { msg.className='error'; msg.innerText="⚠️ Digite login e senha"; return; }
+            if (!u || !p) { msg.className = 'error'; msg.innerText = "⚠️ Digite login e senha"; return; }
 
             btn.disabled = true;
             btn.innerText = "VERIFICANDO...";
             msg.innerText = "";
 
             try {
-                // Tenta buscar o usuário verificando as duas colunas possíveis
+                // Consulta sem usar .or() para testar se é erro de syntax
                 const { data, error } = await _supabase
                     .from('companies')
                     .select('*')
-                    .or(`login.eq."${u}",user_login.eq."${u}"`)
+                    .eq('login', u)
                     .eq('password', p)
                     .maybeSingle();
 
-                if (error) throw error;
+                if (error) {
+                    // Se der erro aqui, vamos mostrar o erro real do Supabase
+                    console.error("Erro Supabase:", error);
+                    throw new Error(error.message || "Erro de API");
+                }
 
                 if (data) {
                     msg.className = 'success';
@@ -73,13 +175,12 @@
 
             } catch (e) {
                 msg.className = 'error';
-                msg.innerText = "❌ " + (e.message || "Erro de conexão");
+                msg.innerText = "❌ " + e.message;
                 btn.disabled = false;
                 btn.innerText = "ACESSAR PAINEL";
             }
         }
-
-        document.addEventListener('keypress', (e) => { if (e.key === 'Enter') tentarLogar(); });
     </script>
 </body>
+
 </html>
