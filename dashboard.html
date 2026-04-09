@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InstaConsult AI | Estratégia de Growth</title>
+    <title>InstaConsult AI | Dashboard Estratégico</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -13,6 +14,7 @@
             --bg: #030712;
             --glass: rgba(17, 24, 39, 0.7);
             --border: rgba(255, 255, 255, 0.08);
+            --text-dim: #94a3b8;
         }
 
         body {
@@ -27,196 +29,361 @@
 
         /* Sidebar Stylized */
         .sidebar {
-            background: rgba(17, 24, 39, 0.95);
+            background: rgba(17, 24, 39, 0.98);
             border-right: 1px solid var(--border);
             padding: 40px 24px;
             position: sticky;
             top: 0;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .profile-area { text-align: center; margin-bottom: 40px; }
+        .profile-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
         .profile-pic {
-            width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary);
-            margin-bottom: 15px; object-fit: cover; box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            margin-bottom: 15px;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
 
         .nav-link {
-            display: flex; align-items: center; gap: 12px; padding: 14px 18px;
-            color: #94a3b8; text-decoration: none; border-radius: 12px; margin-bottom: 8px; transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: 0.3s;
+            cursor: pointer;
+            font-weight: 500;
         }
-        .nav-link.active { background: rgba(139, 92, 246, 0.1); color: var(--primary); font-weight: 700; }
 
-        /* Main Content */
-        main { padding: 40px 60px; }
-        
-        .section-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; letter-spacing: -1px; }
+        .nav-link.active {
+            background: rgba(139, 92, 246, 0.15);
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
 
-        /* Grid de Insights */
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px; }
-        .grid-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 40px; }
+        .nav-link:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.03);
+            color: white;
+        }
+
+        /* Main Area & Views */
+        main {
+            padding: 40px 60px;
+            overflow-y: auto;
+        }
+
+        .view-section {
+            display: none;
+            animation: slideUp 0.4s ease forwards;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         .card {
-            background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 24px;
-            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        /* Plano de Conteúdo 9 Posts */
-        .content-plan {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 30px;
         }
-        .post-card {
-            aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--border);
-            padding: 15px; display: flex; flex-direction: column; justify-content: space-between;
-            transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
-        }
-        .post-card:hover { transform: scale(1.02); border-color: var(--primary); }
-        
-        .type-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; width: fit-content; }
-        .tag-growth { background: #4ade8022; color: #4ade80; }
-        .tag-connection { background: #38bdf822; color: #38bdf8; }
-        .tag-obj { background: #fb718522; color: #fb7185; }
-        .tag-auth { background: #facc1522; color: #facc15; }
 
-        /* Demographics */
-        .demo-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin: 10px 0; }
-        .demo-fill { height: 100%; background: var(--primary); border-radius: 4px; }
+        /* Grid Helpers */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Content Plan Grid */
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .post-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .post-box:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .b-growth {
+            background: #4ade8022;
+            color: #4ade80;
+        }
+
+        .b-conn {
+            background: #38bdf822;
+            color: #38bdf8;
+        }
+
+        .b-obj {
+            background: #fb718522;
+            color: #fb7185;
+        }
+
+        .b-auth {
+            background: #facc1522;
+            color: #facc15;
+        }
+
+        .demo-bar-bg {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 5px;
+            margin: 12px 0;
+        }
+
+        .demo-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: var(--primary);
+        }
     </style>
 </head>
+
 <body>
 
     <aside class="sidebar">
         <div class="profile-area">
-            <img src="https://via.placeholder.com/150" class="profile-pic" id="pfp">
+            <img src="" class="profile-pic" id="pfp_side">
             <h3 id="uName" style="margin:0; font-size: 1.2rem;">@usuario</h3>
-            <p id="uNiche" style="color: #94a3b8; font-size: 0.8rem; margin-top: 5px;">Consultoria</p>
+            <p id="uNiche" style="color: var(--text-dim); font-size: 0.8rem; margin-top: 5px;">Consultoria</p>
         </div>
 
         <nav>
-            <a href="#" class="nav-link active">📊 Resumo Geral</a>
-            <a href="#" class="nav-link">👥 Audiência</a>
-            <a href="#" class="nav-link">📝 Plano de Conteúdo</a>
-            <a href="#" class="nav-link">🔬 Auditoria de Perfil</a>
+            <div class="nav-link active" onclick="switchView('dashboard', this)"><span>📊</span> Resumo Geral</div>
+            <div class="nav-link" onclick="switchView('audience', this)"><span>👥</span> Audiência</div>
+            <div class="nav-link" onclick="switchView('plan', this)"><span>📝</span> Plano de Conteúdo</div>
+            <div class="nav-link" onclick="switchView('audit', this)"><span>🔬</span> Auditoria Perfil</div>
         </nav>
+
+        <div
+            style="margin-top: auto; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; font-size: 0.8rem;">
+            <p style="color: var(--text-dim); margin-bottom: 5px;">Powered by</p>
+            <p
+                style="font-weight: 800; margin: 0; background: linear-gradient(to right, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                InstaConsult AI 360</p>
+        </div>
     </aside>
 
     <main>
-        <section>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-                <h1 class="section-title">Análise Estratégica AI 360</h1>
-                <div style="background: rgba(74, 222, 128, 0.1); color: #4ade80; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">
-                    Sincronizado com API Oficial
+        <!-- VIEW: RESUMO GERAL -->
+        <section id="view-dashboard" class="view-section active">
+            <h2>Estratégia AI 360</h2>
+            <div class="grid-3" style="margin-bottom: 30px;">
+                <div class="card" style="margin-bottom:0">
+                    <p style="font-size: 0.8rem; color: var(--text-dim);">Alcance (30 dias)</p>
+                    <h4 style="font-size: 1.8rem; margin: 10px 0;">+24.5k</h4>
+                    <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">↑ 12% vs mês ant.</span>
+                </div>
+                <div class="card" style="margin-bottom:0">
+                    <p style="font-size: 0.8rem; color: var(--text-dim);">Engajamento Médio</p>
+                    <h4 style="font-size: 1.8rem; margin: 10px 0;">4.2%</h4>
+                    <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">Alta Fidelidade</span>
+                </div>
+                <div class="card" style="margin-bottom:0">
+                    <p style="font-size: 0.8rem; color: var(--text-dim);">Melhor Horário</p>
+                    <h4 style="font-size: 1.8rem; margin: 10px 0;">19:30</h4>
+                    <span style="color: var(--primary); font-size: 0.8rem; font-weight: 700;">Pico de audiência</span>
                 </div>
             </div>
 
-            <!-- AUDITORIA RÁPIDA -->
-            <div class="grid-3">
-                <div class="card">
-                    <p style="color: var(--text-dim); font-size: 0.8rem; margin:0">Análise da BIO</p>
-                    <p style="margin: 10px 0; font-size: 0.9rem; line-height: 1.4;">Sua BIO atual precisa de uma CTA mais clara. Sugestão: "Otimize seus resultados com [X]"</p>
-                </div>
-                <div class="card">
-                    <p style="color: var(--text-dim); font-size: 0.8rem; margin:0">Horário Nobre</p>
-                    <h3 style="font-size: 2rem; margin: 10px 0;">18:45</h3>
-                    <p style="color: #4ade80; font-size: 0.8rem;">Melhor engajamento</p>
-                </div>
-                <div class="card">
-                    <p style="color: var(--text-dim); font-size: 0.8rem; margin:0">Conteúdo Destaque</p>
-                    <h3 style="font-size: 1rem; margin: 10px 0;">Reels Educativo</h3>
-                    <p style="color: #38bdf8; font-size: 0.8rem;">+14% de Salvamentos</p>
-                </div>
+            <div class="card">
+                <h3>Insights em Destaque</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;">O algoritmo detectou uma alta conversão em seus
+                    últimos 3 **Reels Educativos**. Sua audiência prefere conteúdos que ensinam processos rápidos.
+                    <br><br><strong>Recomendação:</strong> Mantenha o formato de 'Dica de 15 segundos' nos próximos 5
+                    dias.</p>
             </div>
+        </section>
 
-            <!-- ESTRATÉGIA DE CONTEÚDO (OS 9 POSTS) -->
-            <div class="card" style="margin-bottom: 40px;">
-                <h3 style="margin-top: 0;">Plano de Conteúdo sugerido (9 Fundamentais)</h3>
-                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px;">Metodologia InstaConsult: 5 Crescimento | 2 Conexão | 1 Objeção | 1 Autoridade</p>
-                
-                <div class="content-plan" id="planGrid">
-                    <!-- Gerado pela Lógica AI -->
-                </div>
-            </div>
-
-            <!-- DEMOGRÁFICOS -->
+        <!-- VIEW: AUDIÊNCIA -->
+        <section id="view-audience" class="view-section">
+            <h2>Perfil da Audiência</h2>
             <div class="grid-2">
                 <div class="card">
-                    <h3>Principais Localidades</h3>
-                    <div style="margin-top:20px;">
-                        <div style="display:flex; justify-content:space-between; font-size: 0.85rem;"><span>São Paulo, SP</span><span>42%</span></div>
-                        <div class="demo-bar"><div class="demo-fill" style="width: 42%;"></div></div>
-                        
-                        <div style="display:flex; justify-content:space-between; font-size: 0.85rem; margin-top:15px;"><span>Rio de Janeiro, RJ</span><span>18%</span></div>
-                        <div class="demo-bar"><div class="demo-fill" style="width: 18%; background: #38bdf8;"></div></div>
-                        
-                        <div style="display:flex; justify-content:space-between; font-size: 0.85rem; margin-top:15px;"><span>Belo Horizonte, MG</span><span>12%</span></div>
-                        <div class="demo-bar"><div class="demo-fill" style="width: 12%; background: #fb7185;"></div></div>
-                    </div>
+                    <h3>Gênero Dominante</h3>
+                    <div style="height: 250px;"><canvas id="chartGender"></canvas></div>
                 </div>
                 <div class="card">
-                    <h3>Gênero e Idade</h3>
-                    <div style="margin-top:30px;">
-                         <canvas id="genderChart"></canvas>
+                    <h3>Principais Localidades</h3>
+                    <div style="margin-top: 20px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span>São
+                                    Paulo, SP</span><span>42%</span></div>
+                            <div class="demo-bar-bg">
+                                <div class="demo-bar-fill" style="width: 42%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;"><span>Rio de
+                                    Janeiro, RJ</span><span>18%</span></div>
+                            <div class="demo-bar-bg">
+                                <div class="demo-bar-fill" style="width: 18%; background: #38bdf8;"></div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: PLANO DE CONTEÚDO -->
+        <section id="view-plan" class="view-section">
+            <h2>Agenda de Postagens AI</h2>
+            <p style="color: var(--text-dim); margin-bottom: 30px;">Mix estratégico: 5 Growth | 2 Connection | 1
+                Objection | 1 Authority</p>
+            <div class="plan-grid" id="planContainer"></div>
+        </section>
+
+        <!-- VIEW: AUDITORIA -->
+        <section id="view-audit" class="view-section">
+            <h2>Auditoria de Consultoria</h2>
+            <div class="card" style="border-left: 5px solid #facc15;">
+                <h4 style="margin:0; text-transform: uppercase; color: #facc15;">Ajuste URGENTE de Bio</h4>
+                <p style="margin-top:15px; line-height: 1.5;">O sistema identificou que sua BIO atual não possui uma
+                    **Promessa de Valor** clara. <br><br><strong>Sugestão AI:</strong> "Te ajudo a escalar sua
+                    consultoria através de dados estratégicos. 🚀 Clique abaixo para auditoria gratuita."</p>
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Análise de Destaques</h3>
+                    <p style="color: var(--text-dim);">Falta um destaque de "Comece Aqui" ou "Resultados". Isso está
+                        matando sua taxa de retenção de novos seguidores.</p>
+                </div>
+                <div class="card">
+                    <h3>Últimos 9 Posts</h3>
+                    <p style="color: var(--text-dim);">3 posts performaram abaixo da média (Flop). Identificamos que o
+                        uso de cores escuras demais na capa reduziu o CTR.</p>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // LÓGICA DE GERAÇÃO DO PLANO DOS 9 POSTS
-        const contentPlan = [
-            { type: 'growth', title: 'Tendência do Nicho', desc: 'Reels rápido com áudio viral explicando um hack do seu mercado.' },
-            { type: 'growth', title: 'Top 3 Ferramentas', desc: 'Carrossel educativo com alto potencial de salvamento.' },
-            { type: 'connection', title: 'Bastidores / Equipe', desc: 'Mostre o processo humano por trás do seu serviço.' },
-            { type: 'growth', title: 'Mito vs Verdade', desc: 'Desmistifique algo comum que ninguém tem coragem de falar.' },
-            { type: 'obj', title: 'Por que é caro?', desc: 'Valide seu preço mostrando a entrega e o custo de não agir.' },
-            { type: 'growth', title: 'Dica de Ouro', desc: 'Um Reels focado na dor principal do seu cliente atual.' },
-            { type: 'connection', title: 'Minha História', desc: 'Por que você começou? Gere identificação imediata.' },
-            { type: 'auth', title: 'Caso de Sucesso', desc: 'Print ou depoimento de um cliente com resultado real.' },
-            { type: 'growth', title: 'Checklist Prático', desc: 'Conteúdo para ser compartilhado nos stories de outras pessoas.' }
+        // --- NAVEGAÇÃO ---
+        function switchView(viewId, el) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+
+            if (viewId === 'audience') initCharts();
+        }
+
+        // --- DADOS DO PLANO ---
+        const plan = [
+            { t: 'growth', h: 'Viral Hack', d: 'Mostre uma solução para um erro comum.' },
+            { t: 'growth', h: 'Top 5 List', d: 'Salve o dia do seu cliente com ferramentas.' },
+            { t: 'conn', h: 'Nosso QG', d: 'Foto humanizada da equipe ou café.' },
+            { t: 'growth', h: 'Checklist', d: 'Passo a passo visual compartilhável.' },
+            { t: 'obj', h: 'É pra mim?', d: 'Quebre a trava do cliente iniciante.' },
+            { t: 'growth', h: 'Reels Tendência', d: 'Use o áudio sugerido para alcance massivo.' },
+            { t: 'conn', h: 'Dificuldades', d: 'Compartilhe um aprendizado de erro.' },
+            { t: 'auth', h: 'Resultados 10k', d: 'Prova social forte e inquestionável.' },
+            { t: 'growth', h: 'Curta e Salve', d: 'Dica curta de alto impacto visual.' }
         ];
 
         function renderPlan() {
-            const grid = document.getElementById('planGrid');
-            grid.innerHTML = contentPlan.map((p, i) => `
-                <div class="post-card">
-                    <span class="type-tag tag-${p.type}">${p.type.replace('obj','objeção').replace('auth','autoridade').replace('growth','crescimento').replace('connection','conexão')}</span>
-                    <div style="margin-top: 15px;">
-                        <h4 style="margin:0 0 5px 0; font-size: 0.9rem;">${i+1}. ${p.title}</h4>
-                        <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">${p.desc}</p>
-                    </div>
+            const container = document.getElementById('planContainer');
+            container.innerHTML = plan.map((p, i) => `
+                <div class="post-box">
+                    <span class="badge b-${p.t}">${p.t === 'conn' ? 'conexão' : p.t === 'obj' ? 'objeção' : p.t === 'auth' ? 'autoridade' : 'crescimento'}</span>
+                    <h4 style="margin: 15px 0 8px 0;">Post ${i + 1}: ${p.h}</h4>
+                    <p style="font-size: 0.75rem; color: var(--text-dim); line-height: 1.4;">${p.d}</p>
                 </div>
             `).join('');
         }
 
+        // --- GRÁFICOS ---
         function initCharts() {
-            const ctx = document.getElementById('genderChart').getContext('2d');
-            new Chart(ctx, {
+            const ctx = document.getElementById('chartGender').getContext('2d');
+            if (window.myChart) window.myChart.destroy();
+            window.myChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Feminino', 'Masculino'],
+                    labels: ['Mulheres', 'Homens'],
                     datasets: [{
-                        data: [65, 35],
+                        data: [67, 33],
                         backgroundColor: ['#d946ef', '#38bdf8'],
-                        borderWidth: 0
+                        borderWidth: 0,
+                        hoverOffset: 15
                     }]
                 },
-                options: { cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+                options: { cutout: '75%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 20 } } } }
             });
         }
 
-        // Simulação de carregamento de perfil
-        function loadClient() {
-            const client = JSON.parse(localStorage.getItem('current_company')) || { name: 'Empresa Teste', username: 'macrotreinamentos', niche: 'Consultoria' };
-            document.getElementById('uName').innerText = '@' + client.username;
-            document.getElementById('uNiche').innerText = client.niche;
-            // Se tiver API funcionando, puxaríamos a foto aqui
-            document.getElementById('pfp').src = `https://unavatar.io/instagram/${client.username}`;
+        // --- LOAD INICIAL ---
+        function loadProfile() {
+            const user = JSON.parse(localStorage.getItem('current_company')) || { username: 'saldanha', niche: 'Consultoria' };
+            document.getElementById('uName').innerText = '@' + user.username;
+            document.getElementById('uNiche').innerText = user.niche;
+            document.getElementById('pfp_side').src = `https://unavatar.io/instagram/${user.username}`;
         }
 
-        loadClient();
+        loadProfile();
         renderPlan();
-        initCharts();
     </script>
 </body>
+
 </html>
