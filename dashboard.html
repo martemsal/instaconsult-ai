@@ -197,6 +197,25 @@
             border-radius: 5px;
             background: var(--primary);
         }
+
+        /* Growth Button Style */
+        .growth-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Outfit';
+        }
+
+        .growth-btn:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
     </style>
 </head>
 
@@ -229,30 +248,48 @@
         <!-- VIEW: RESUMO GERAL -->
         <section id="view-dashboard" class="view-section active">
             <h2>Estratégia AI 360</h2>
-            <div class="grid-3" style="margin-bottom: 30px;">
-                <div class="card" style="margin-bottom:0">
-                    <p style="font-size: 0.8rem; color: var(--text-dim);">Alcance (30 dias)</p>
-                    <h4 style="font-size: 1.8rem; margin: 10px 0;">+24.5k</h4>
-                    <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">↑ 12% vs mês ant.</span>
+
+            <!-- BOTÃO PARA O ANALISTA DA META -->
+            <div id="growth-trigger" class="card"
+                style="border: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; background: rgba(139, 92, 246, 0.05);">
+                <div>
+                    <h3 style="margin:0; font-size: 1.1rem;">Análise Pendente</h3>
+                    <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: var(--text-dim);">Clique para sincronizar os
+                        últimos insights do Instagram</p>
                 </div>
-                <div class="card" style="margin-bottom:0">
-                    <p style="font-size: 0.8rem; color: var(--text-dim);">Engajamento Médio</p>
-                    <h4 style="font-size: 1.8rem; margin: 10px 0;">4.2%</h4>
-                    <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">Alta Fidelidade</span>
-                </div>
-                <div class="card" style="margin-bottom:0">
-                    <p style="font-size: 0.8rem; color: var(--text-dim);">Melhor Horário</p>
-                    <h4 style="font-size: 1.8rem; margin: 10px 0;">19:30</h4>
-                    <span style="color: var(--primary); font-size: 0.8rem; font-weight: 700;">Pico de audiência</span>
-                </div>
+                <button class="growth-btn" onclick="startGrowthAnalysis()">
+                    Iniciar Análise Growth Pro
+                </button>
             </div>
 
-            <div class="card">
-                <h3>Insights em Destaque</h3>
-                <p style="color: var(--text-dim); line-height: 1.6;">O algoritmo detectou uma alta conversão em seus
-                    últimos 3 **Reels Educativos**. Sua audiência prefere conteúdos que ensinam processos rápidos.
-                    <br><br><strong>Recomendação:</strong> Mantenha o formato de 'Dica de 15 segundos' nos próximos 5
-                    dias.</p>
+            <div id="stats-area"
+                style="opacity: 0.1; pointer-events: none; transition: 0.8s filter, 0.8s opacity; filter: blur(5px);">
+                <div class="grid-3" style="margin-bottom: 30px;">
+                    <div class="card" style="margin-bottom:0">
+                        <p style="font-size: 0.8rem; color: var(--text-dim);">Alcance (30 dias)</p>
+                        <h4 style="font-size: 1.8rem; margin: 10px 0;">+24.5k</h4>
+                        <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">↑ 12% vs mês ant.</span>
+                    </div>
+                    <div class="card" style="margin-bottom:0">
+                        <p style="font-size: 0.8rem; color: var(--text-dim);">Engajamento Médio</p>
+                        <h4 style="font-size: 1.8rem; margin: 10px 0;">4.2%</h4>
+                        <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">Alta Fidelidade</span>
+                    </div>
+                    <div class="card" style="margin-bottom:0">
+                        <p style="font-size: 0.8rem; color: var(--text-dim);">Melhor Horário</p>
+                        <h4 style="font-size: 1.8rem; margin: 10px 0;">19:30</h4>
+                        <span style="color: var(--primary); font-size: 0.8rem; font-weight: 700;">Pico de
+                            audiência</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Insights em Destaque</h3>
+                    <p style="color: var(--text-dim); line-height: 1.6;">O algoritmo detectou uma alta conversão em seus
+                        últimos 3 **Reels Educativos**. Sua audiência prefere conteúdos que ensinam processos rápidos.
+                        <br><br><strong>Recomendação:</strong> Mantenha o formato de 'Dica de 15 segundos' nos próximos
+                        5 dias.</p>
+                </div>
             </div>
         </section>
 
@@ -319,6 +356,30 @@
     </main>
 
     <script>
+        // --- FUNÇÃO DO ANALISTA DA META ---
+        function startGrowthAnalysis() {
+            const btn = document.querySelector('.growth-btn');
+            const trigger = document.getElementById('growth-trigger');
+            const stats = document.getElementById('stats-area');
+
+            btn.innerText = "Sincronizando Insights...";
+            btn.style.opacity = "0.6";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                trigger.style.transition = "0.5s";
+                trigger.style.opacity = "0";
+                trigger.style.transform = "translateY(-20px)";
+
+                setTimeout(() => {
+                    trigger.style.display = 'none';
+                    stats.style.opacity = '1';
+                    stats.style.filter = 'blur(0)';
+                    stats.style.pointerEvents = 'auto';
+                }, 500);
+            }, 2000);
+        }
+
         // --- NAVEGAÇÃO ---
         function switchView(viewId, el) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
