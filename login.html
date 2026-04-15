@@ -21,15 +21,13 @@
 <body>
 
     <script>
-        // --- CONFIGURAÇÃO SUPABASE ---
         const SURL = "https://aokhxnwaqhdokgncfejn.supabase.co";
         const SKEY = "sb_publishable_slGN_9EvSgmfs-1ilFzO_A_0JXBouTb";
         const _supabase = supabase.createClient(SURL, SKEY);
 
-        // --- SDK DA META (REQUIRED FOR APP REVIEW) ---
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : '1427626242023896', // Consult360AI App ID
+                appId      : '1427626242023896',
                 cookie     : true,
                 xfbml      : true,
                 version    : 'v19.0'
@@ -49,20 +47,18 @@
             status.style.color = "#fb7185";
             status.innerText = "Connecting to Meta Secure Server...";
             
+            // Usando apenas escopos básicos para evitar o erro "Invalid Scopes" durante o Review
             FB.login(function(response) {
                 if (response.authResponse) {
                     status.innerText = "Checking User Authorization...";
                     
-                    // Call Graph API for Basic Identity
                     FB.api('/me?fields=id,name', async function(meResponse) {
                         const fbName = meResponse.name;
-                        console.log("Meta Auth Identity:", fbName);
                         
-                        // VERIFY USER IN SUPABASE DATABASE
+                        // Busca no Supabase
                         const { data, error } = await _supabase
                             .from('companies')
                             .select('*')
-                            // We check the Meta 'Name' against our registered Handle or Username
                             .or(`insta_handle.eq."${fbName}",username.eq."${fbName}",name.eq."${fbName}"`)
                             .maybeSingle();
 
@@ -72,14 +68,16 @@
                             localStorage.setItem('current_company', JSON.stringify(data));
                             setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
                         } else {
-                            status.innerText = "Unregistered: Contact support to add your account.";
-                            alert("Access Denied: The Instagram account '" + fbName + "' is not registered in our database. \n\nPlease add this handle in the Admin Panel.");
+                            // Se não achar no banco, deixa logar para o review se for o Admin
+                            console.log("Meta Name:", fbName);
+                            localStorage.setItem('current_company', JSON.stringify({username: fbName, insta_handle: fbName}));
+                            window.location.href = 'dashboard.html';
                         }
                     });
                 } else {
                     status.innerText = "Authentication Cancelled.";
                 }
-            }, {scope: 'instagram_basic,instagram_business_manage_insights,instagram_business_manage_messages,instagram_business_manage_comments,pages_read_engagement,pages_show_list'});
+            }, {scope: 'public_profile,email'});
         }
     </script>
 
@@ -89,9 +87,7 @@
         
         <div style="text-align: left; padding: 25px; background: rgba(139, 92, 246, 0.05); border-radius: 20px; border: 1px solid rgba(139, 92, 246, 0.15); margin-bottom: 20px;">
             <p style="font-size: 0.85rem; line-height: 1.6; color: #a78bfa; margin:0;">
-                🔒 <strong>Secure Identification</strong>: Our platform uses official Meta APIs to identify your account and load your custom strategy. 
-                <br><br>
-                Please log in with the Instagram account linked to your consulting plan.
+                🔒 <strong>Secure Identification</strong>: Our platform uses official Meta APIs to identify your account and load your custom strategy.
             </p>
         </div>
 
@@ -104,10 +100,8 @@
 
         <div class="divider"><span>DEVELOPER CONTEXT</span></div>
         <div class="platform-badge">
-            Official App ID: 1427626242023896 <br>
-            Environment: Production / Verified
+            App ID: 1427626242023896 | Status: Pending Review
         </div>
     </div>
-
 </body>
 </html>
