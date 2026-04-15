@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InstaConsult AI | Growth & Business Dashboard</title>
+    <title>InstaConsult AI | Business Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -19,8 +19,8 @@
 
         body {
             background: var(--bg);
-            background-image: radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(217, 70, 239, 0.1) 0%, transparent 50%);
+            background-image: radial-gradient(circle at 10% 10%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(217, 70, 239, 0.1) 0%, transparent 40%);
             color: white;
             font-family: 'Outfit', sans-serif;
             margin: 0;
@@ -137,6 +137,49 @@
             gap: 30px;
         }
 
+        /* Content Hub Tags */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .b-growth {
+            background: #4ade8022;
+            color: #4ade80;
+        }
+
+        .b-conn {
+            background: #38bdf822;
+            color: #38bdf8;
+        }
+
+        .b-obj {
+            background: #fb718522;
+            color: #fb7185;
+        }
+
+        .b-auth {
+            background: #facc1522;
+            color: #facc15;
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .post-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            transition: 0.3s;
+        }
+
         .growth-btn {
             background: var(--primary);
             color: white;
@@ -156,7 +199,6 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 18px;
             padding: 20px;
-            margin-top: 20px;
         }
 
         .chat-messages {
@@ -187,23 +229,8 @@
             color: white;
         }
 
-        .chat-input {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .chat-input input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            padding: 12px 18px;
-            border-radius: 12px;
-            color: white;
-        }
-
         .logout-btn {
-            margin-top: 20px;
+            margin-top: auto;
             padding: 12px;
             font-size: 0.85rem;
             color: #fb7185;
@@ -213,7 +240,6 @@
             cursor: pointer;
             transition: 0.3s;
             text-align: center;
-            font-weight: 600;
         }
 
         .logout-btn:hover {
@@ -224,10 +250,11 @@
 </head>
 
 <body>
+
     <aside class="sidebar">
         <div class="profile-area">
             <img src="" class="profile-pic" id="pfp_side">
-            <h3 id="uName" style="margin:0; font-size: 1.25rem;">@username</h3>
+            <h3 id="uName" style="margin:0; font-size: 1.2rem;">@username</h3>
             <p id="uNiche" style="color: var(--text-dim); font-size: 0.85rem;">Business Consulting</p>
         </div>
         <nav>
@@ -237,9 +264,7 @@
             <div class="nav-link" onclick="switchView('messages', this)"><span>💬</span> Inbox & Engagement</div>
             <div class="nav-link" onclick="switchView('audit', this)"><span>🔬</span> Profile Audit</div>
         </nav>
-        <div style="margin-top: auto;">
-            <div class="logout-btn" onclick="logout()">Secure Logout / Sair</div>
-        </div>
+        <div class="logout-btn" onclick="logout()">Secure Logout / Sair</div>
     </aside>
 
     <main>
@@ -250,11 +275,12 @@
                 style="border: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="margin:0;">Analysis Pending</h3>
-                    <p style="margin:5px 0 0 0; color: var(--text-dim);">Click to synchronize Instagram metrics</p>
+                    <p style="margin:5px 0 0 0; color: var(--text-dim); font-size: 0.85rem;">Click to synchronize with
+                        Instagram Graph API metrics</p>
                 </div>
                 <button class="growth-btn" onclick="startGrowthAnalysis()">Iniciar Análise Growth Pro</button>
             </div>
-            <div id="stats-area" style="opacity: 0.1; filter: blur(5px); pointer-events: none;">
+            <div id="stats-area" style="opacity: 0.1; filter: blur(5px); pointer-events: none; transition: 0.6s;">
                 <div class="grid-3">
                     <div class="card">
                         <p>Reach</p>
@@ -265,34 +291,82 @@
                         <h4>4.2%</h4>
                     </div>
                     <div class="card">
-                        <p>Best Time</p>
+                        <p>Best Posting Time</p>
                         <h4>07:30 PM</h4>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Top AI Analysis</h3>
+                    <p>Our AI suggests you focus on **Educational Reels** this week to maximize viral reach based on
+                        'instagram_business_manage_insights' data.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AUDIENCE VIEW -->
+        <section id="view-audience" class="view-section">
+            <h2>Audience Demographics</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Gender Distribution</h3>
+                    <div style="height: 250px;"><canvas id="chartGender"></canvas></div>
+                </div>
+                <div class="card">
+                    <h3>Top Locations</h3>
+                    <p>Detailed analysis of your followers' geographic data.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTENT STRATEGY -->
+        <section id="view-plan" class="view-section">
+            <h2>AI Content Calendar</h2>
+            <div class="plan-grid" id="planContainer"></div>
+        </section>
+
+        <!-- MESSAGES VIEW -->
+        <section id="view-messages" class="view-section">
+            <h2>Inbox & Engagement Hub</h2>
+            <p style="font-style: italic; color: var(--text-dim); margin-bottom: 20px;">Reviewer Demo: Demonstrate
+                'instagram_business_manage_messages' capability.</p>
+            <div class="card">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatArea">
+                        <div class="msg received">Hello! How can I grow my profile using your strategies?</div>
+                        <div class="msg sent">Hi! Our AI analyzes your insights to create a tailored 9-post matrix for
+                            you.</div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <input type="text" id="msgContent"
+                            style="flex:1; background: transparent; border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: white;"
+                            placeholder="Reply via API...">
+                        <button class="growth-btn" onclick="sendMessageTest()">Send</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- MESSAGES VIEW (IMPORTANT FOR META REVIEW) -->
-        <section id="view-messages" class="view-section">
-            <h2>Inbox & Engagement Hub</h2>
-            <p style="font-style: italic; color: var(--text-dim);">Demonstrating 'instagram_business_manage_messages'
-                capability.</p>
-            <div class="card">
-                <div class="chat-container">
-                    <div class="chat-messages" id="chatArea">
-                        <div class="msg received">Hello! How can I join the program?</div>
-                    </div>
-                    <div class="chat-input">
-                        <input type="text" id="msgContent" placeholder="Reply via Instagram API...">
-                        <button class="growth-btn" onclick="sendMessageTest()">Send Reply</button>
-                    </div>
-                </div>
+        <!-- AUDIT VIEW -->
+        <section id="view-audit" class="view-section">
+            <h2>Profile AI Audit</h2>
+            <div class="card" style="border-left: 5px solid #facc15;">
+                <h4 style="color: #facc15;">Bio & Visual Audit</h4>
+                <p>Status: **Optimization Recommended**. Use a clear value proposition in your bio.</p>
             </div>
         </section>
     </main>
 
     <script>
         function logout() { localStorage.removeItem('current_company'); window.location.href = 'login.html'; }
+
+        function switchView(viewId, el) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+            if (viewId === 'audience') initCharts();
+            if (viewId === 'plan') renderPlan();
+        }
 
         function startGrowthAnalysis() {
             const btn = document.querySelector('.growth-btn');
@@ -301,23 +375,35 @@
                 document.getElementById('growth-trigger').style.display = 'none';
                 document.getElementById('stats-area').style.opacity = '1';
                 document.getElementById('stats-area').style.filter = 'blur(0)';
-            }, 2000);
+            }, 1500);
         }
 
         function sendMessageTest() {
-            const content = document.getElementById('msgContent').value;
-            if (!content) return;
-            const msg = document.createElement('div');
-            msg.className = 'msg sent'; msg.innerText = content;
-            document.getElementById('chatArea').appendChild(msg);
+            const val = document.getElementById('msgContent').value; if (!val) return;
+            const m = document.createElement('div'); m.className = 'msg sent'; m.innerText = val;
+            document.getElementById('chatArea').appendChild(m);
             document.getElementById('msgContent').value = '';
         }
 
-        function switchView(viewId, el) {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
+        function renderPlan() {
+            const plan = [
+                { t: 'growth', h: 'Viral Reel', d: 'Use trending audio to boost reach.' },
+                { t: 'conn', h: 'Behind Scenes', d: 'Show your team at work.' },
+                { t: 'auth', h: 'Case Study', d: 'Share results from your last consult.' }
+            ];
+            document.getElementById('planContainer').innerHTML = plan.map(p => `
+                <div class="post-box">
+                    <span class="badge b-${p.t}">${p.t}</span>
+                    <h4 style="margin: 10px 0;">${p.h}</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-dim);">${p.d}</p>
+                </div>
+            `).join('');
+        }
+
+        function initCharts() {
+            const ctx = document.getElementById('chartGender').getContext('2d');
+            if (window.myC) window.myC.destroy();
+            window.myC = new Chart(ctx, { type: 'doughnut', data: { labels: ['Women', 'Men'], datasets: [{ data: [67, 33], backgroundColor: ['#d946ef', '#38bdf8'] }] }, options: { cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } } });
         }
 
         function loadProfile() {
@@ -327,9 +413,7 @@
                 document.getElementById('uName').innerText = '@' + handle;
                 document.getElementById('uNiche').innerText = companyData.niche || 'Business Consulting';
                 document.getElementById('pfp_side').src = `https://unavatar.io/instagram/${handle}`;
-            } else {
-                window.location.href = 'login.html';
-            }
+            } else { window.location.href = 'login.html'; }
         }
         loadProfile();
     </script>
