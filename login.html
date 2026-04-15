@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InstaConsult AI | Verified Login</title>
+    <title>InstaConsult AI | Business Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #8b5cf6; --bg: #030712; }
         body { background: var(--bg); color: white; font-family: 'Outfit'; display: flex; align-items: center; justify-content: center; height: 100vh; margin:0; }
-        .login-card { background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(255,255,255,0.1); padding: 50px; border-radius: 30px; backdrop-filter: blur(20px); text-align: center; width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .login-card { background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(255,255,255,0.1); padding: 50px; border-radius: 30px; backdrop-filter: blur(20px); text-align: center; width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .fb-login-btn { background: #1877F2; color: white; border: none; padding: 15px 30px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; font-size: 1rem; transition: 0.3s; margin-top: 20px; }
         .fb-login-btn:hover { background: #145dbf; transform: translateY(-2px); }
         .divider { margin: 30px 0; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; }
         .divider span { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #0b1120; padding: 0 10px; font-size: 0.8rem; color: #94a3b8; }
-        #status-msg { margin-top: 20px; font-size: 0.85rem; color: #fb7185; min-height: 20px; }
+        #status-msg { margin-top: 20px; font-size: 0.85rem; color: #fb7185; min-height: 20px; font-weight: 600; }
+        .platform-badge { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; font-size: 0.75rem; color: #94a3b8; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -25,10 +26,10 @@
         const SKEY = "sb_publishable_slGN_9EvSgmfs-1ilFzO_A_0JXBouTb";
         const _supabase = supabase.createClient(SURL, SKEY);
 
-        // --- SDK DA META ---
+        // --- SDK DA META (REQUIRED FOR APP REVIEW) ---
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : '1427626242023896', // Consult360AI
+                appId      : '1427626242023896', // Consult360AI App ID
                 cookie     : true,
                 xfbml      : true,
                 version    : 'v19.0'
@@ -45,59 +46,67 @@
 
         async function launchMetaLogin() {
             const status = document.getElementById('status-msg');
-            status.innerText = "Connecting to Meta...";
+            status.style.color = "#fb7185";
+            status.innerText = "Connecting to Meta Secure Server...";
             
             FB.login(function(response) {
                 if (response.authResponse) {
-                    status.innerText = "Authenticating user...";
+                    status.innerText = "Checking User Authorization...";
                     
-                    // Pegamos os detalhes do usuário que logou
+                    // Call Graph API for Basic Identity
                     FB.api('/me?fields=id,name', async function(meResponse) {
                         const fbName = meResponse.name;
+                        console.log("Meta Auth Identity:", fbName);
                         
-                        // VERIFICAÇÃO NO SUPABASE
-                        // Buscamos se existe uma empresa cadastrada com esse handle ou nome
+                        // VERIFY USER IN SUPABASE DATABASE
                         const { data, error } = await _supabase
                             .from('companies')
                             .select('*')
-                            .or(`insta_handle.eq."${fbName}",username.eq."${fbName}"`)
+                            // We check the Meta 'Name' against our registered Handle or Username
+                            .or(`insta_handle.eq."${fbName}",username.eq."${fbName}",name.eq."${fbName}"`)
                             .maybeSingle();
 
                         if (data) {
                             status.style.color = "#4ade80";
-                            status.innerText = "Verified! Redirecting...";
+                            status.innerText = "Authorized! Welcome, " + fbName;
                             localStorage.setItem('current_company', JSON.stringify(data));
                             setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
                         } else {
-                            status.innerText = "Access Denied: Account not registered in our platform.";
-                            console.log("Meta Name found:", fbName);
-                            alert("Acesso Negado: A conta Meta '" + fbName + "' não foi encontrada em nosso banco de dados da consultoria.");
+                            status.innerText = "Unregistered: Contact support to add your account.";
+                            alert("Access Denied: The Instagram account '" + fbName + "' is not registered in our database. \n\nPlease add this handle in the Admin Panel.");
                         }
                     });
                 } else {
-                    status.innerText = "Login cancelled or failed.";
+                    status.innerText = "Authentication Cancelled.";
                 }
             }, {scope: 'instagram_basic,instagram_business_manage_insights,instagram_business_manage_messages,instagram_business_manage_comments,pages_read_engagement,pages_show_list'});
         }
     </script>
 
     <div class="login-card">
-        <h1 style="margin:0 0 10px 0; font-weight: 800; font-size: 2.2rem;">InstaConsult AI</h1>
-        <p style="color: #94a3b8; margin:0 0 10px 0;">Growth & Business Platform</p>
+        <h1 style="margin:0 0 10px 0; font-weight: 800; font-size: 2.3rem;">InstaConsult AI</h1>
+        <p style="color: #94a3b8; font-weight: 500; margin:0 0 30px 0;">Growth Marketing Command Center</p>
         
-        <div style="padding: 20px; background: rgba(139, 92, 246, 0.05); border-radius: 15px; border: 1px solid rgba(139, 92, 246, 0.1); margin-bottom: 30px;">
-            <p style="font-size: 0.8rem; line-height: 1.5; color: #a78bfa; margin:0;">🔐 Log in to your Professional Instagram to sync your data and unlock your custom strategic dashboard.</p>
+        <div style="text-align: left; padding: 25px; background: rgba(139, 92, 246, 0.05); border-radius: 20px; border: 1px solid rgba(139, 92, 246, 0.15); margin-bottom: 20px;">
+            <p style="font-size: 0.85rem; line-height: 1.6; color: #a78bfa; margin:0;">
+                🔒 <strong>Secure Identification</strong>: Our platform uses official Meta APIs to identify your account and load your custom strategy. 
+                <br><br>
+                Please log in with the Instagram account linked to your consulting plan.
+            </p>
         </div>
 
         <button class="fb-login-btn" onclick="launchMetaLogin()">
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="22" height="22">
-            Continue with Facebook
+            Login with Instagram Business
         </button>
 
         <div id="status-msg"></div>
 
-        <div class="divider"><span>SECURE AUTH</span></div>
-        <p style="font-size: 0.75rem; color: #4b5563;">Official Meta App ID: 1427626242023896</p>
+        <div class="divider"><span>DEVELOPER CONTEXT</span></div>
+        <div class="platform-badge">
+            Official App ID: 1427626242023896 <br>
+            Environment: Production / Verified
+        </div>
     </div>
 
 </body>
